@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import base64
 import html
+import mimetypes
 import os
 from typing import Optional
 
@@ -301,7 +303,31 @@ def _asset_url(path: Optional[str], output_path: Optional[str]) -> Optional[str]
         return html.escape(path, quote=True)
 
     normalized = os.path.normpath(path)
+    inline_asset = _inline_local_asset(normalized, output_path)
+    if inline_asset:
+        return inline_asset
+
     if output_path and os.path.isabs(normalized):
         output_dir = os.path.dirname(os.path.abspath(output_path))
         normalized = os.path.relpath(normalized, output_dir)
     return html.escape(normalized.replace("\\", "/"), quote=True)
+
+
+def _inline_local_asset(path: str, output_path: Optional[str]) -> Optional[str]:
+    asset_path = path
+    if not os.path.isabs(asset_path):
+        base_dir = os.getcwd()
+        if output_path:
+            base_dir = os.path.dirname(os.path.abspath(output_path))
+        asset_path = os.path.join(base_dir, asset_path)
+
+    if not os.path.exists(asset_path):
+        return None
+
+    mime_type, _ = mimetypes.guess_type(asset_path)
+    if not mime_type or not mime_type.startswith("image/"):
+        return None
+
+    with open(asset_path, "rb") as asset_file:
+        encoded = base64.b64encode(asset_file.read()).decode("ascii")
+    return f"data:{mime_type};base64,{encoded}"

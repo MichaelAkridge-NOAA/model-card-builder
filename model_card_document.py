@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional, Union
 
-from model_card_data import Metric, ModelCardData
+from model_card_data import Metric, ModelCardData, infer_pipeline_tag
 
 
 SUPPORTED_TEMPLATES = {"standard"}
@@ -70,78 +70,81 @@ def build_card_document(
     if theme not in SUPPORTED_THEMES:
         raise ValueError(f"Unsupported theme '{theme}'.")
 
-    sections = [
-        CardSection(
-            title="Model Summary",
-            blocks=[
-                *(
-                    [TextBlock(text=model_card_data.generated_summary, format="markdown")]
-                    if model_card_data.generated_summary
-                    else []
-                ),
-                TextBlock(text=model_card_data.overview),
-                _optional_image(
-                    model_card_data.assets.detection_example,
-                    "Example detection",
-                    "Example detection on underwater footage",
-                ),
-            ],
-        ),
-        CardSection(
-            title="Model Performance",
-            blocks=[
-                MetricTableBlock(metrics=model_card_data.metrics),
-                _optional_image(
-                    model_card_data.assets.pr_curve,
-                    "Precision recall curve",
-                    "Precision-recall curve",
-                ),
-            ],
-        ),
-        CardSection(
-            title="Usage Guide",
-            blocks=[
-                *(
-                    [TextBlock(text=model_card_data.deployment, format="markdown")]
-                    if model_card_data.deployment
-                    else []
-                ),
-                KeyValueListBlock(
-                    title="Technical Details",
-                    items=[
-                        ("Architecture", model_card_data.model_details.architecture),
-                        ("Input Size", model_card_data.model_details.input_size),
-                        ("Training Data", model_card_data.model_details.training_data),
-                    ],
-                ),
-                BulletListBlock(
-                    title="Confidence Threshold Settings",
-                    items=[
-                        f"{threshold.threshold}: {threshold.description}"
-                        for threshold in model_card_data.confidence_thresholds
-                    ],
-                ),
-            ],
-        ),
-    ]
+    pipeline_tag = infer_pipeline_tag(model_card_data)
+    summary_blocks = []
+    if model_card_data.generated_summary:
+        summary_blocks.append(TextBlock(text=model_card_data.generated_summary, format="markdown"))
+    if _should_render_overview(model_card_data):
+        summary_blocks.append(TextBlock(text=model_card_data.overview))
+    primary_image_caption, primary_image_alt = _primary_visual_labels(pipeline_tag)
+    primary_image = _optional_image(
+        model_card_data.assets.detection_example,
+        primary_image_alt,
+        primary_image_caption,
+    )
+    if primary_image is not None:
+        summary_blocks.append(primary_image)
+
+    sections = []
+    if summary_blocks:
+        sections.append(CardSection(title="Model Summary", blocks=summary_blocks))
 
     if model_card_data.intended_use:
-        sections.insert(
-            1,
+        sections.append(
             CardSection(
                 title="Intended Use",
                 blocks=[TextBlock(text=model_card_data.intended_use, format="markdown")],
-            ),
+            )
         )
 
+    performance_blocks = []
+    if model_card_data.metrics:
+        performance_blocks.append(MetricTableBlock(metrics=model_card_data.metrics))
+    performance_caption, performance_alt = _performance_visual_labels(pipeline_tag)
+    performance_image = _optional_image(
+        model_card_data.assets.pr_curve,
+        performance_alt,
+        performance_caption,
+    )
+    if performance_image is not None:
+        performance_blocks.append(performance_image)
+    if performance_blocks:
+        sections.append(CardSection(title="Model Performance", blocks=performance_blocks))
+
     if model_card_data.training_details:
-        sections.insert(
-            3,
+        sections.append(
             CardSection(
                 title="Training Details",
                 blocks=[TextBlock(text=model_card_data.training_details, format="markdown")],
-            ),
+            )
         )
+
+    usage_blocks = [
+        *(
+            [TextBlock(text=model_card_data.deployment, format="markdown")]
+            if model_card_data.deployment
+            else []
+        ),
+        KeyValueListBlock(
+            title="Technical Details",
+            items=[
+                ("Architecture", model_card_data.model_details.architecture),
+                ("Input Size", model_card_data.model_details.input_size),
+                ("Training Data", model_card_data.model_details.training_data),
+            ],
+        ),
+    ]
+    if _supports_confidence_thresholds(pipeline_tag):
+        usage_blocks.append(
+            BulletListBlock(
+                title="Confidence Threshold Settings",
+                items=[
+                    f"{threshold.threshold}: {threshold.description}"
+                    for threshold in model_card_data.confidence_thresholds
+                ],
+            )
+        )
+    sections.append(CardSection(title="Usage Guide", blocks=usage_blocks))
 
     if model_card_data.limitations:
         sections.append(
@@ -194,3 +197,27 @@ def _optional_image(path: Optional[str], alt_text: str, caption: str) -> Optiona
     if not path:
         return None
     return ImageBlock(path=path, alt_text=alt_text, caption=caption)
+
+
+def _should_render_overview(model_card_data: ModelCardData) -> bool:
+    if not model_card_data.overview:
+        return False
+    if model_card_data.generated_summary and model_card_data.assessment.get("overview_quality") == "metadata_only":
+        return False
+    return True
+
+
+def _supports_confidence_thresholds(pipeline_tag: str) -> bool:
+    return pipeline_tag == "object-detection"
+
+
+def _primary_visual_labels(pipeline_tag: str) -> tuple[str, str]:
+    if pipeline_tag == "image-classification":
+        return ("Representative model visualization", "Representative model visualization")
+    return ("Example detection on underwater footage", "Example detection")
+
+
+def _performance_visual_labels(pipeline_tag: str) -> tuple[str, str]:
+    if pipeline_tag == "image-classification":
+        return ("Performance visualization", "Performance visualization")
+    return ("Precision-recall curve", "Precision recall curve")

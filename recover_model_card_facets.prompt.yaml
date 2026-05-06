@@ -1,0 +1,38 @@
+messages:
+  - role: system
+    content: >-
+      You recover missing model-card facets into strict JSON.
+      Return valid JSON only. Do not wrap the response in markdown fences.
+      Use only information explicitly present in the model card.
+      Do not invent image filenames or metrics that are not clearly labeled.
+  - role: user
+    content: |-
+      Read this Hugging Face model card and recover only the missing facets listed below.
+
+      Current completeness assessment:
+      {{assessment}}
+
+      Missing facets:
+      {{missing_fields}}
+
+      Return a JSON object with this exact shape:
+      {
+        "generated_summary": "optional short summary if the current overview is metadata-like, otherwise ''",
+        "key_metrics": [
+          { "name": "metric name", "value": 0.0, "meaning": "what it means" }
+        ],
+        "primary_visual_hints": ["short phrases matching the best representative image"],
+        "performance_visual_hints": ["short phrases matching the best performance image"]
+      }
+
+      Rules:
+      - If a facet is not clearly present, return an empty value.
+      - Only include key_metrics when metrics are clearly labeled.
+      - For visual hints, return short phrases that would match image alt text or filenames already present in the README.
+
+      Model card markdown:
+      {{input}}
+model: openai/gpt-4o
+modelParameters:
+  max_tokens: 1200
+  temperature: 0.1

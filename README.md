@@ -35,9 +35,9 @@ A Python-based model card builder that fetches Hugging Face metadata into a type
 4. **Optional summary enrichment with GitHub Models:**
    ```powershell
    $env:GITHUB_TOKEN = "<token with models access>"
-   python summarize_model_card.py --url https://huggingface.co/org/model --data model_data.json --prompt summarize.prompt.yaml
+   python summarize_model_card.py --url https://huggingface.co/org/model --data model_data.json --prompt summarize.prompt.yaml --recovery-prompt recover_model_card_facets.prompt.yaml
    ```
-   This augments `model_data.json` with a generated summary and fills missing narrative fields when the deterministic parser leaves gaps.
+   This augments `model_data.json` with a generated summary, then optionally runs a targeted recovery pass for missing metrics or representative visuals when the completeness assessor finds gaps.
 
 5. **One-step flow from a Hugging Face URL:**
    ```powershell

@@ -10,6 +10,8 @@ import requests
 import yaml
 
 from model_card_data import (
+    apply_targeted_recovery,
+    assess_model_card_data,
     extract_repo_id,
     fetch_readme_content,
     load_model_card_data,
@@ -25,35 +27,62 @@ def summarize_model_card(
     url_or_id: str,
     data_path: str,
     prompt_path: str,
+    recovery_prompt_path: Optional[str] = None,
     endpoint: str = DEFAULT_ENDPOINT,
 ) -> None:
     model_card_data = load_model_card_data(data_path)
     missing_fields = _missing_narrative_fields(model_card_data)
-    if not missing_fields:
-        print("No missing narrative fields. Skipping GitHub Models summary step.")
-        return
-
     repo_id = extract_repo_id(url_or_id)
     readme_content = fetch_readme_content(repo_id)
     if not readme_content:
         raise RuntimeError(f"README.md could not be fetched for {repo_id}.")
 
-    prompt = _load_prompt(prompt_path)
-    messages = _render_messages(
-        messages=prompt["messages"],
-        model_card_markdown=readme_content,
-        model_card_data=model_card_data,
-        missing_fields=missing_fields,
-    )
-    summary_payload = _request_summary_payload(
-        model=prompt["model"],
-        messages=messages,
-        model_parameters=prompt.get("modelParameters", {}),
-        endpoint=endpoint,
-        retries=1,
-    )
-    updated_model_card_data = merge_generated_summary(model_card_data, summary_payload)
-    save_model_card_data(updated_model_card_data, data_path)
+    if missing_fields:
+        prompt = _load_prompt(prompt_path)
+        messages = _render_messages(
+            messages=prompt["messages"],
+            model_card_markdown=readme_content,
+            model_card_data=model_card_data,
+            missing_fields=missing_fields,
+            assessment=model_card_data.assessment,
+        )
+        summary_payload = _request_summary_payload(
+            model=prompt["model"],
+            messages=messages,
+            model_parameters=prompt.get("modelParameters", {}),
+            endpoint=endpoint,
+            retries=1,
+        )
+        model_card_data = merge_generated_summary(model_card_data, summary_payload)
+        save_model_card_data(model_card_data, data_path)
+        print("Merged narrative summary fields.")
+    else:
+        print("No missing narrative fields. Skipping primary summary step.")
+
+    assessment = assess_model_card_data(model_card_data)
+    print(json.dumps(assessment, indent=2, ensure_ascii=False))
+
+    if recovery_prompt_path and os.path.exists(recovery_prompt_path) and _needs_targeted_recovery(assessment):
+        recovery_prompt = _load_prompt(recovery_prompt_path)
+        recovery_messages = _render_messages(
+            messages=recovery_prompt["messages"],
+            model_card_markdown=readme_content,
+            model_card_data=model_card_data,
+            missing_fields=assessment["recovery_targets"],
+            assessment=assessment,
+        )
+        recovery_payload = _request_summary_payload(
+            model=recovery_prompt["model"],
+            messages=recovery_messages,
+            model_parameters=recovery_prompt.get("modelParameters", {}),
+            endpoint=endpoint,
+            retries=1,
+        )
+        model_card_data = apply_targeted_recovery(model_card_data, repo_id, readme_content, recovery_payload)
+        save_model_card_data(model_card_data, data_path)
+        print("Applied targeted recovery.")
+    else:
+        print("No targeted recovery needed.")
 
 
 def _load_prompt(prompt_path: str) -> dict[str, Any]:
@@ -69,6 +98,7 @@ def _render_messages(
     model_card_markdown: str,
     model_card_data: Any,
     missing_fields: list[str],
+    assessment: dict[str, Any],
 ) -> list[dict[str, Any]]:
     rendered = []
     existing_data = json.dumps(
@@ -82,6 +112,7 @@ def _render_messages(
         indent=2,
         ensure_ascii=False,
     )
+    assessment_json = json.dumps(assessment, indent=2, ensure_ascii=False)
     for message in messages:
         content = message.get("content", "")
         if isinstance(content, str):
@@ -89,6 +120,7 @@ def _render_messages(
                 content.replace("{{input}}", model_card_markdown)
                 .replace("{{existing_data}}", existing_data)
                 .replace("{{missing_fields}}", ", ".join(missing_fields))
+                .replace("{{assessment}}", assessment_json)
             )
         rendered.append({"role": message["role"], "content": content})
     return rendered
@@ -181,6 +213,9 @@ def _normalize_summary_payload(payload: dict[str, Any]) -> dict[str, Any]:
         "limitations": str(payload.get("limitations", "")).strip(),
         "deployment": str(payload.get("deployment", "")).strip(),
         "training_details": str(payload.get("training_details", "")).strip(),
+        "key_metrics": payload.get("key_metrics", []),
+        "primary_visual_hints": payload.get("primary_visual_hints", []),
+        "performance_visual_hints": payload.get("performance_visual_hints", []),
     }
 
 
@@ -195,6 +230,10 @@ def _missing_narrative_fields(model_card_data: Any) -> list[str]:
     return [name for name, value in fields.items() if not str(value or "").strip()]
 
 
+def _needs_targeted_recovery(assessment: dict[str, Any]) -> bool:
+    return bool(assessment.get("needs_targeted_recovery"))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Summarize a Hugging Face model card with GitHub Models and merge the result into model_data.json."
@@ -202,6 +241,7 @@ def main() -> int:
     parser.add_argument("--url", required=True, help="Hugging Face model URL or org/model repo id")
     parser.add_argument("--data", required=True, help="Path to model_data.json")
     parser.add_argument("--prompt", required=True, help="Path to summarize.prompt.yaml")
+    parser.add_argument("--recovery-prompt", help="Path to targeted recovery prompt")
     parser.add_argument("--endpoint", default=DEFAULT_ENDPOINT, help="GitHub Models inference endpoint")
     args = parser.parse_args()
 
@@ -209,6 +249,7 @@ def main() -> int:
         url_or_id=args.url,
         data_path=args.data,
         prompt_path=args.prompt,
+        recovery_prompt_path=args.recovery_prompt,
         endpoint=args.endpoint,
     )
     return 0
