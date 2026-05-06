@@ -3,8 +3,7 @@ name: Model Card Builder
 "on":
   issues:
     types:
-      - opened
-      - edited
+      - labeled
   workflow_dispatch:
     inputs:
       model_url:
@@ -17,10 +16,20 @@ permissions:
   contents: read
   models: read
 
+concurrency:
+  group: model-card-${{ github.event.issue.number || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   build_model_card:
     runs-on: ubuntu-latest
-    if: contains(github.event.issue.body, 'huggingface.co/') || github.event_name == 'workflow_dispatch'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event_name == 'issues' &&
+        github.event.label.name == 'generate-model-card' &&
+        contains(github.event.issue.body, 'huggingface.co/')
+      )
 
     steps:
       - name: Checkout repository

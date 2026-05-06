@@ -44,6 +44,10 @@ A Python-based model card builder that fetches Hugging Face metadata into a type
    python build.py --url https://huggingface.co/org/model --template standard --theme noaa
    ```
 
+6. **GitHub Actions trigger policy:**
+   - `workflow_dispatch` can always be used manually.
+   - Issue-driven generation only runs when a maintainer applies the `generate-model-card` label to an issue that contains a Hugging Face URL.
+
 ### Template Features
 - Clean, one-page layout
 - NOAA/NMFS branded design
