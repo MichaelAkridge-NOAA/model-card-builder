@@ -1,20 +1,21 @@
 name: Model Card Builder
 
-#on:
-#  issues:
-#    types:
-#      - opened
-#      - edited
-#  workflow_dispatch:
-#    inputs:
-#      model_url:
-#        description: 'Hugging Face model URL'
-#        required: true
-#        type: string
+"on":
+  issues:
+    types:
+      - opened
+      - edited
+  workflow_dispatch:
+    inputs:
+      model_url:
+        description: 'Hugging Face model URL'
+        required: true
+        type: string
 
 permissions:
   issues: write
   contents: read
+  models: read
 
 jobs:
   build_model_card:
@@ -68,27 +69,38 @@ jobs:
           fi
           echo "Successfully generated model_data.json"
 
-      - name: Generate PDF summary
-        id: generate-pdf
+      - name: Summarize model card
+        id: summarize-model
+        if: success() || steps.fetch-data.outcome == 'success'
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Generating structured summary for ${{ steps.extract-url.outputs.repo_id }}"
+          python summarize_model_card.py --url "${{ steps.extract-url.outputs.url }}" --data model_data.json --prompt summarize.prompt.yaml 2>&1 | tee summary.log
+
+      - name: Generate HTML summary
+        id: generate-html
         if: success() || steps.fetch-data.outcome == 'success'
         run: |
-          echo "Generating PDF for ${{ steps.extract-url.outputs.repo_id }}"
-          python build.py --url "${{ steps.extract-url.outputs.url }}" 2>&1 | tee build.log
-          if [ ! -f "Model_Card.pdf" ]; then
-            echo "::error::Failed to generate Model_Card.pdf"
+          echo "Generating HTML for ${{ steps.extract-url.outputs.repo_id }}"
+          python build.py --data model_data.json 2>&1 | tee build.log
+          if [ ! -f "Model_Card.html" ]; then
+            echo "::error::Failed to generate Model_Card.html"
             exit 1
           fi
-          echo "Successfully generated Model_Card.pdf"
+          echo "Successfully generated Model_Card.html"
 
-      - name: Upload PDF artifact
-        if: success() || steps.generate-pdf.outcome == 'success'
+      - name: Upload HTML artifact
+        if: success() || steps.generate-html.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: model-card-pdf
+          name: model-card-html
           path: |
-            Model_Card.pdf
+            Model_Card.html
             model_data.json
             fetch.log
+            summary.log
             build.log
 
       - name: Comment on issue
@@ -98,7 +110,7 @@ jobs:
         run: |
           MODEL_NAME="${{ steps.extract-url.outputs.repo_id }}"
           STATUS=""
-          if [[ "${{ steps.generate-pdf.outcome }}" == "success" ]]; then
+          if [[ "${{ steps.generate-html.outcome }}" == "success" ]]; then
             STATUS="✅ Successfully generated"
           else
             STATUS="⚠️ Generated with some warnings"
@@ -111,9 +123,10 @@ jobs:
           To access the generated files:
           1. Go to the [workflow run](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})
           2. Scroll to the Artifacts section
-          3. Download \`model-card-pdf\` to get:
-             - The PDF summary
+          3. Download \`model-card-html\` to get:
+             - The HTML summary
              - Raw model data (JSON)
+             - Summary logs
              - Build logs
           
           Generated using [NOAA Model Card Template](https://github.com/noaa-fisheries/model-card-template)

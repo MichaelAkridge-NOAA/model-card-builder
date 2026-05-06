@@ -1,13 +1,13 @@
-# NOAA Model Card Template (Under Active development)
-# Coming Soon - In Progress
-A modern, clean template for creating model cards using Quarto & Python. This template provides a standardized way to document machine learning models following NOAA guidelines.
+# NOAA Model Card Template
+A Python-based model card builder that fetches Hugging Face metadata into a typed **Model Card Data** contract, builds a format-neutral **Card Document**, and renders an HTML model card using named templates and themes.
 
 ![Example Model Card](./assets/model_card_template_example.png)
 
-# Coming Soon
 ## Features
-- 📊 Clean, modern single-page layout
+- 📊 Clean, modern single-page HTML layout
 - 🎨 NOAA/NMFS branded design with official colors
+- 🧱 Typed model-card contract and section-based document builder
+- 🧩 Named template and theme interface for future renderers
 - 📱 Responsive column layout
 - 🔄 Automated GitHub Actions workflow
 - 📈 Support for data visualization
@@ -16,41 +16,46 @@ A modern, clean template for creating model cards using Quarto & Python. This te
 ### How to Use
 
 1. **Install Requirements:**
-   - Download and install Quarto from https://quarto.org/docs/get-started/
-   - For PDF output:
-     ```powershell
-     quarto install tinytex
-     ```
+   ```powershell
+   pip install -r requirements.txt
+   ```
 
-2. **Add your model details:**
-   - Copy `model_card_template.qmd` to a new file (e.g., `my_model_card.qmd`).
-   - Replace the placeholders (e.g., `{{< model_name >}}`) with your model's information.
-   - Required images:
-     - `nmfs-opensci-logo3.png` - NMFS OpenSci logo (download from [NOAA-NMFS-Brand-Resources](https://github.com/nmfs-opensci/NOAA-NMFS-Brand-Resources/blob/main/logos/nmfs-opensci-logo3.png))
-     - `example_detection.png` - An example of your model's detection/output
-     - `example_PR_curve.png` - Your model's precision-recall curve
+2. **Fetch model-card data:**
+   ```powershell
+   python fetch_hf_model_card.py https://huggingface.co/org/model
+   ```
+   This writes `model_data.json` in the typed **Model Card Data** shape, with README-first extraction for overview, intended use, deployment, limitations, metrics, and real model asset URLs when available.
 
 3. **Render the model card:**
    ```
-   # For HTML output
-   quarto render my_model_card.qmd --to html
-   
-   # For PDF output
-   quarto render my_model_card.qmd --to pdf
+   python build.py --data model_data.json
    ```
-   The output will be in the `_output` folder.
+   This writes `Model_Card.html` in the repository root.
+
+4. **Optional summary enrichment with GitHub Models:**
+   ```powershell
+   $env:GITHUB_TOKEN = "<token with models access>"
+   python summarize_model_card.py --url https://huggingface.co/org/model --data model_data.json --prompt summarize.prompt.yaml
+   ```
+   This augments `model_data.json` with a generated summary and fills missing narrative fields when the deterministic parser leaves gaps.
+
+5. **One-step flow from a Hugging Face URL:**
+   ```powershell
+   python build.py --url https://huggingface.co/org/model --template standard --theme noaa
+   ```
 
 ### Template Features
 - Clean, one-page layout
 - NOAA/NMFS branded design
-- Automated PR curve plotting
-- Support for both HTML and PDF output
+- Format-neutral **Card Document** built from structured sections and blocks
+- README-first model card extraction with frontmatter parsing and richer metric capture
+- Optional GitHub Models summarization step driven by `summarize.prompt.yaml`
+- HTML renderer adapter with room for future adapters such as PDF
 - All key model card sections
 - Easy to edit and extend
 
 ---
 
-For more on Quarto, see [quarto.org](https://quarto.org/).
 - https://github.com/tensorflow/model-card-toolkit
 - https://modelcards.withgoogle.com/
 ----------

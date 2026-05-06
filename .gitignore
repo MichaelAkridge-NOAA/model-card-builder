@@ -20,3 +20,12 @@ Thumbs.db
 *.log
 *.out
 *.synctex.gz
+
+# Generated model card artifacts
+Model_Card.html
+model_data.json
+/.agents
+/__pycache__
+skills-lock.json
+/tests/__pycache__
+CONTEXT.md

@@ -1,9 +1,40 @@
 messages:
   - role: system
     content: >-
-      You are a summarizer for Hugging Face model cards. Extract key model details like architecture, training data, purpose, limitations, and evaluation metrics. Summarize clearly and concisely.
+      You summarize Hugging Face model cards into strict JSON.
+      Return valid JSON only. Do not wrap the response in markdown fences.
+      Use only facts explicitly present in the model card.
+      Prefer concise narrative fields.
+      Ignore legal boilerplate and disclaimers unless they describe a real model limitation.
+      Do not invent metrics, datasets, deployment steps, or training details.
   - role: user
-    content: 'Summarize this model card: {{input}}'
-model: gpt-4o
+    content: |-
+      Read this Hugging Face model card and fill only the missing narrative gaps.
+
+      Existing extracted data:
+      {{existing_data}}
+
+      Missing fields to fill:
+      {{missing_fields}}
+
+      Return a JSON object with this exact shape:
+      {
+        "generated_summary": "2-3 sentence executive summary",
+        "intended_use": "short markdown paragraph or bullet list",
+        "limitations": "short markdown paragraph or bullet list",
+        "deployment": "short markdown paragraph or bullet list",
+        "training_details": "short markdown paragraph or bullet list"
+      }
+
+      Rules:
+      - Keep each field concise.
+      - If a field is not clearly present, return "".
+      - Do not repeat legal disclaimers unless they describe a model risk.
+      - Do not restate metrics or factual fields that already exist in the extracted data.
+
+      Model card markdown:
+      {{input}}
+model: openai/gpt-4o
 modelParameters:
-  max_tokens: 4096
+  max_tokens: 1500
+  temperature: 0.1
