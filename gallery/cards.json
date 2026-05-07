@@ -12,26 +12,5 @@
     "description": "Brief 1-2 sentence overview of the model from README",
     "organization": "HuggingFace organization name for grouping and search"
   },
-  "cards": [
-    {
-      "model_id": "akridge/yolo11-fish-detector-grayscale",
-      "model_name": "Akridge/Yolo11 Fish Detector Grayscale",
-      "model_url": "https://huggingface.co/akridge/yolo11-fish-detector-grayscale",
-      "card_url": "gallery/cards/akridge/yolo11-fish-detector-grayscale.html",
-      "pipeline_type": "other",
-      "date_added": "2026-05-07T18:50:35.933198Z",
-      "description": "language: - en base_model: - Ultralytics/YOLO11 tags: - yolo - yolo11 - yolo11n - fish datasets: - akridge/MOUSS_fish_imagery_dataset_grayscale_small pipeline_tag: object-detection library_name: ultra",
-      "organization": "akridge"
-    },
-    {
-      "model_id": "akridge/yolo11m-sea-urchin-detector",
-      "model_name": "YOLO11m Sea Urchin Detector",
-      "model_url": "https://huggingface.co/akridge/yolo11m-sea-urchin-detector",
-      "card_url": "cards/akridge/yolo11m-sea-urchin-detector.html",
-      "pipeline_type": "object-detection",
-      "date_added": "2025-01-27T00:00:00Z",
-      "description": "This YOLO11m-based model is designed for detecting sea urchins in underwater environments. It is optimized for real-time and post-processed video analysis, trained on diverse open-source datasets.",
-      "organization": "akridge"
-    }
-  ]
+  "cards": []
 }
