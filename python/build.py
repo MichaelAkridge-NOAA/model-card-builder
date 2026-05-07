@@ -3,6 +3,10 @@ import argparse
 import os
 from pathlib import Path
 
+# Allow running as `python python/build.py` from repo root.
+if __package__ is None or __package__ == "":
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from python.fetch_hf_model_card import fetch_model_card
 from python.html_renderer import render_card_document
 from python.model_card_data import load_model_card_data, with_assets_dir

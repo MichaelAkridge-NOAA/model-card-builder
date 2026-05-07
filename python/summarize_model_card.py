@@ -4,10 +4,15 @@ import argparse
 import json
 import os
 import sys
+from pathlib import Path
 from typing import Any, Optional
 
 import requests
 import yaml
+
+# Allow running as `python python/summarize_model_card.py` from repo root.
+if __package__ is None or __package__ == "":
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from python.model_card_data import (
     apply_targeted_recovery,

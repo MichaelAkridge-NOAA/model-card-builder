@@ -4,6 +4,10 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+# Allow running as `python python/fetch_hf_model_card.py` from repo root.
+if __package__ is None or __package__ == "":
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from python.model_card_data import fetch_model_card_data, save_model_card_data
 
 
