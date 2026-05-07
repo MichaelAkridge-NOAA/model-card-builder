@@ -170,12 +170,16 @@
             font-size: 1.2rem;
             color: #005cb9;
             word-break: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .pipeline-badge {
             display: inline-block;
             margin-bottom: 12px;
-            padding: 4px 8px;
+            padding: 6px 12px;
             background: #d9ecff;
             color: #005cb9;
             border-radius: 4px;
@@ -185,11 +189,35 @@
             width: fit-content;
         }
 
+        .pipeline-badge.object-detection {
+            background: #c7e1f3;
+            color: #2E7D9F;
+        }
+
+        .pipeline-badge.image-classification {
+            background: #d1e7dc;
+            color: #2D8659;
+        }
+
+        .pipeline-badge.segmentation {
+            background: #e2d7f0;
+            color: #7B4397;
+        }
+
+        .pipeline-badge.other {
+            background: #e8e6e1;
+            color: #555555;
+        }
+
         .card-description {
             margin: 0 0 12px;
             color: #34495e;
             font-size: 0.9rem;
             flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .card-org {
@@ -243,6 +271,13 @@
             text-decoration: underline;
         }
 
+        @media (max-width: 1024px) {
+            .card-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
             .card-grid {
                 grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -293,6 +328,16 @@
             main {
                 padding: 16px 12px;
             }
+
+            .controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .search-input, .pipeline-select {
+                width: 100%;
+                min-width: unset;
+            }
         }
     </style>
 </head>
@@ -308,11 +353,13 @@
                     </div>
                 </div>
                 <div class="controls">
-                    <input type="text" id="search" class="search-input" placeholder="Search models..." aria-label="Search models">
+                    <input type="text" id="search" class="search-input" placeholder="Search models..." aria-label="Search models by name or description">
                     <select id="pipeline-filter" class="pipeline-select" aria-label="Filter by pipeline type">
                         <option value="">All Pipeline Types</option>
                         <option value="image-classification">Image Classification</option>
                         <option value="object-detection">Object Detection</option>
+                        <option value="segmentation">Segmentation</option>
+                        <option value="other">Other</option>
                     </select>
                 </div>
             </div>
@@ -323,16 +370,28 @@
         <section class="pipeline-section" data-pipeline="image-classification">
             <h2>Image Classification</h2>
             <div class="card-grid">
-                <div class="model-card" data-model-id="resnet50_imagenet_classifier" data-pipeline="image-classification" data-searchable="ResNet50 ImageNet Classifier ResNet50 pretrained on ImageNet-1k for general-purpose image classification. Top-1 accuracy: 76.1%. example-org">
+                <div class="model-card" data-model-id="resnet50_imagenet_classifier" data-pipeline="image-classification" data-searchable="resnet50 imagenet classifier resnet50 pretrained on imagenet-1k for general-purpose image classification. top-1 accuracy: 76.1%. noaa-ai">
                 <div class="card-thumbnail">
                     <img src="gallery/thumbnails/resnet50_imagenet_classifier.jpg" alt="ResNet50 ImageNet Classifier" loading="lazy">
                 </div>
                 <div class="card-content">
                     <h3>ResNet50 ImageNet Classifier</h3>
-                    <span class="pipeline-badge">Image Classification</span>
+                    <span class="pipeline-badge image-classification">Image Classification</span>
                     <p class="card-description">ResNet50 pretrained on ImageNet-1k for general-purpose image classification. Top-1 accuracy: 76.1%.</p>
-                    <p class="card-org">Organization: example-org</p>
+                    <p class="card-org">Organization: NOAA-AI</p>
                     <a href="gallery/cards/resnet50_imagenet_classifier.html" class="card-link">View Full Card →</a>
+                </div>
+            </div>
+                <div class="model-card" data-model-id="efficientnet_marine_classification" data-pipeline="image-classification" data-searchable="efficientnet marine species classifier efficientnet-b3 fine-tuned for marine species classification with 94.2% top-1 accuracy on validation set. noaa-ai">
+                <div class="card-thumbnail">
+                    <img src="gallery/thumbnails/efficientnet_marine_classification.jpg" alt="EfficientNet Marine Species Classifier" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3>EfficientNet Marine Species Classifier</h3>
+                    <span class="pipeline-badge image-classification">Image Classification</span>
+                    <p class="card-description">EfficientNet-B3 fine-tuned for marine species classification with 94.2% top-1 accuracy on validation set.</p>
+                    <p class="card-org">Organization: NOAA-AI</p>
+                    <a href="gallery/cards/efficientnet_marine_classification.html" class="card-link">View Full Card →</a>
                 </div>
             </div>
             </div>
@@ -341,16 +400,76 @@
         <section class="pipeline-section" data-pipeline="object-detection">
             <h2>Object Detection</h2>
             <div class="card-grid">
-                <div class="model-card" data-model-id="yolo11m_esa_coral_detector" data-pipeline="object-detection" data-searchable="YOLO11m ESA Coral Detector YOLO11 medium model trained for detecting coral species in underwater imagery. Achieves 92% mAP@50 on ESA test set. example-org">
+                <div class="model-card" data-model-id="yolo11m_esa_coral_detector" data-pipeline="object-detection" data-searchable="yolo11m esa coral detector yolo11 medium model trained for detecting coral species in underwater imagery. achieves 92% map@50 on esa test set. nmfs-osi">
                 <div class="card-thumbnail">
                     <img src="gallery/thumbnails/yolo11m_esa_coral_detector.jpg" alt="YOLO11m ESA Coral Detector" loading="lazy">
                 </div>
                 <div class="card-content">
                     <h3>YOLO11m ESA Coral Detector</h3>
-                    <span class="pipeline-badge">Object Detection</span>
+                    <span class="pipeline-badge object-detection">Object Detection</span>
                     <p class="card-description">YOLO11 medium model trained for detecting coral species in underwater imagery. Achieves 92% mAP@50 on ESA test set.</p>
-                    <p class="card-org">Organization: example-org</p>
+                    <p class="card-org">Organization: NMFS-OSI</p>
                     <a href="gallery/cards/yolo11m_esa_coral_detector.html" class="card-link">View Full Card →</a>
+                </div>
+            </div>
+                <div class="model-card" data-model-id="yolov5_fish_detector" data-pipeline="object-detection" data-searchable="yolov5 fish species detector yolov5 model optimized for detecting fish species in sonar imagery. trained on noaa fisheries data with 88.5% map. nmfs-osi">
+                <div class="card-thumbnail">
+                    <img src="gallery/thumbnails/yolov5_fish_detector.jpg" alt="YOLOv5 Fish Species Detector" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3>YOLOv5 Fish Species Detector</h3>
+                    <span class="pipeline-badge object-detection">Object Detection</span>
+                    <p class="card-description">YOLOv5 model optimized for detecting fish species in sonar imagery. Trained on NOAA fisheries data with 88.5% mAP.</p>
+                    <p class="card-org">Organization: NMFS-OSI</p>
+                    <a href="gallery/cards/yolov5_fish_detector.html" class="card-link">View Full Card →</a>
+                </div>
+            </div>
+                <div class="model-card" data-model-id="faster_rcnn_vessel_detection" data-pipeline="object-detection" data-searchable="faster r-cnn vessel detector faster r-cnn model for detecting and classifying vessels in satellite imagery. 91% precision on test dataset. nmfs-osi">
+                <div class="card-thumbnail">
+                    <img src="gallery/thumbnails/faster_rcnn_vessel_detection.jpg" alt="Faster R-CNN Vessel Detector" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3>Faster R-CNN Vessel Detector</h3>
+                    <span class="pipeline-badge object-detection">Object Detection</span>
+                    <p class="card-description">Faster R-CNN model for detecting and classifying vessels in satellite imagery. 91% precision on test dataset.</p>
+                    <p class="card-org">Organization: NMFS-OSI</p>
+                    <a href="gallery/cards/faster_rcnn_vessel_detection.html" class="card-link">View Full Card →</a>
+                </div>
+            </div>
+            </div>
+        </section>
+        
+        <section class="pipeline-section" data-pipeline="segmentation">
+            <h2>Segmentation</h2>
+            <div class="card-grid">
+                <div class="model-card" data-model-id="vit_ocean_segmentation" data-pipeline="segmentation" data-searchable="vision transformer ocean segmentation vision transformer model for semantic segmentation of ocean features from satellite imagery. achieves 87% miou. noaa-ai">
+                <div class="card-thumbnail">
+                    <img src="gallery/thumbnails/vit_ocean_segmentation.jpg" alt="Vision Transformer Ocean Segmentation" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3>Vision Transformer Ocean Segmentation</h3>
+                    <span class="pipeline-badge segmentation">Segmentation</span>
+                    <p class="card-description">Vision Transformer model for semantic segmentation of ocean features from satellite imagery. Achieves 87% mIoU.</p>
+                    <p class="card-org">Organization: NOAA-AI</p>
+                    <a href="gallery/cards/vit_ocean_segmentation.html" class="card-link">View Full Card →</a>
+                </div>
+            </div>
+            </div>
+        </section>
+        
+        <section class="pipeline-section" data-pipeline="other">
+            <h2>Other</h2>
+            <div class="card-grid">
+                <div class="model-card" data-model-id="lstm_fisheries_forecast" data-pipeline="other" data-searchable="lstm fisheries catch forecaster lstm neural network for forecasting seasonal fisheries catch based on historical data and environmental parameters. rmse: 12.3%. nmfs-osi">
+                <div class="card-thumbnail">
+                    <img src="gallery/thumbnails/lstm_fisheries_forecast.jpg" alt="LSTM Fisheries Catch Forecaster" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3>LSTM Fisheries Catch Forecaster</h3>
+                    <span class="pipeline-badge other">Other</span>
+                    <p class="card-description">LSTM neural network for forecasting seasonal fisheries catch based on historical data and environmental parameters. RMSE: 12.3%.</p>
+                    <p class="card-org">Organization: NMFS-OSI</p>
+                    <a href="gallery/cards/lstm_fisheries_forecast.html" class="card-link">View Full Card →</a>
                 </div>
             </div>
             </div>
@@ -360,17 +479,24 @@
 
         <footer>
             Generated by <strong>NOAA Model Card Template</strong> | 
-            <a href="https://github.com/MichaelAkridge-NOAA/model-card-template">GitHub</a>
+            <a href="https://github.com/MichaelAkridge-NOAA/model-card-template">GitHub</a> | 
+            <span id="card-count">7 models</span>
         </footer>
     </div>
 
     <script>
         (function() {
-            const cards = document.querySelectorAll('.model-card');
-            const sections = document.querySelectorAll('.pipeline-section');
-            const searchInput = document.getElementById('search');
-            const pipelineFilter = document.getElementById('pipeline-filter');
-            const gallery = document.getElementById('gallery');
+            const cards = document.querySelectorAll(''.model-card'');
+            const sections = document.querySelectorAll(''.pipeline-section'');
+            const searchInput = document.getElementById(''search'');
+            const pipelineFilter = document.getElementById(''pipeline-filter'');
+            const gallery = document.getElementById(''gallery'');
+            const cardCountSpan = document.getElementById(''card-count'');
+
+            function updateCardCount() {
+                const visibleCards = document.querySelectorAll(''.model-card:not(.hidden)'');
+                cardCountSpan.textContent = visibleCards.length + '' model'' + (visibleCards.length !== 1 ? ''s'' : '''');
+            }
 
             function filterCards() {
                 const query = searchInput.value.toLowerCase().trim();
@@ -378,63 +504,69 @@
                 let visibleSections = 0;
                 let totalVisibleCards = 0;
 
-                sections.forEach(section => {
+                sections.forEach(function(section) {
                     const sectionPipeline = section.dataset.pipeline;
                     let visibleCardsInSection = 0;
 
-                    const sectionCards = section.querySelectorAll('.model-card');
-                    sectionCards.forEach(card => {
+                    const sectionCards = section.querySelectorAll(''.model-card'');
+                    sectionCards.forEach(function(card) {
                         const searchable = card.dataset.searchable.toLowerCase();
                         const cardPipeline = card.dataset.pipeline;
 
-                        const matchesSearch = query === '' || searchable.includes(query);
-                        const matchesPipeline = selectedPipeline === '' || cardPipeline === selectedPipeline;
+                        const matchesSearch = query === '''' || searchable.includes(query);
+                        const matchesPipeline = selectedPipeline === '''' || cardPipeline === selectedPipeline;
                         const shouldShow = matchesSearch && matchesPipeline;
 
-                        card.classList.toggle('hidden', !shouldShow);
+                        card.classList.toggle(''hidden'', !shouldShow);
                         if (shouldShow) {
                             visibleCardsInSection++;
                             totalVisibleCards++;
                         }
                     });
 
-                    const pipelineMatches = selectedPipeline === '' || sectionPipeline === selectedPipeline;
+                    const pipelineMatches = selectedPipeline === '''' || sectionPipeline === selectedPipeline;
                     const shouldShowSection = visibleCardsInSection > 0 && pipelineMatches;
-                    section.classList.toggle('hidden', !shouldShowSection);
+                    section.classList.toggle(''hidden'', !shouldShowSection);
                     if (shouldShowSection) {
                         visibleSections++;
                     }
                 });
 
-                // Show "no results" message if needed
-                if (totalVisibleCards === 0 && (query !== '' || selectedPipeline !== '')) {
+                if (totalVisibleCards === 0 && (query !== '''' || selectedPipeline !== '''')) {
                     showNoResults();
                 } else {
                     hideNoResults();
                 }
+
+                updateCardCount();
             }
 
             function showNoResults() {
-                if (document.getElementById('no-results')) return;
-                const noResults = document.createElement('div');
-                noResults.id = 'no-results';
-                noResults.className = 'no-results';
-                noResults.innerHTML = '<p>😕 No models match your search</p><p>Try adjusting your filters or search terms.</p>';
+                if (document.getElementById(''no-results'')) return;
+                const noResults = document.createElement(''div'');
+                noResults.id = ''no-results'';
+                noResults.className = ''no-results'';
+                noResults.innerHTML = ''<p>😕 No models match your search</p><p>Try adjusting your filters or search terms.</p>'';
                 gallery.appendChild(noResults);
             }
 
             function hideNoResults() {
-                const noResults = document.getElementById('no-results');
+                const noResults = document.getElementById(''no-results'');
                 if (noResults) {
                     noResults.remove();
                 }
             }
 
-            searchInput.addEventListener('keyup', filterCards);
-            searchInput.addEventListener('change', filterCards);
-            pipelineFilter.addEventListener('change', filterCards);
+            searchInput.addEventListener(''keyup'', filterCards);
+            searchInput.addEventListener(''change'', filterCards);
+            pipelineFilter.addEventListener(''change'', filterCards);
 
-            // Initial render
+            searchInput.addEventListener(''keydown'', function(e) {
+                if (e.key === ''Enter'') {
+                    filterCards();
+                }
+            });
+
             filterCards();
         })();
     </script>
