@@ -3,7 +3,6 @@
 Model Card Builder is an AI automation pipeline that converts a Hugging Face model URL into a typed model-data card, generates a branded HTML model card, updates a searchable gallery, and publishes the result to GitHub Pages.
 
 ![Pipeline](./assets/pipeline.png)
-![Example Model Card](./assets/model_card_template_example.png)
 
 ## What It Does
 
@@ -13,6 +12,9 @@ Model Card Builder is an AI automation pipeline that converts a Hugging Face mod
 - Generates Model_Card.html with named template and theme architecture
 - Archives cards, updates gallery/cards.json, and rebuilds the gallery index
 - Publishes static site output through GitHub Pages automation
+
+## Example 
+![Example Model Card](./assets/model_card_template_example.png)
 
 ### Stage Notes
 
