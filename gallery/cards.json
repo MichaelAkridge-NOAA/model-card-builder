@@ -13,5 +13,15 @@
     "organization": "HuggingFace organization name for grouping and search"
   },
   "cards": [
+    {
+      "model_id": "NMFS-OSI/yolo11m-esa-coral-icra-detector",
+      "model_name": "Nmfs Osi/Yolo11M Esa Coral Icra Detector",
+      "model_url": "https://huggingface.co/NMFS-OSI/yolo11m-esa-coral-icra-detector",
+      "card_url": "cards/NMFS-OSI/yolo11m-esa-coral-icra-detector.html",
+      "pipeline_type": "object-detection",
+      "date_added": "2026-05-07T19:12:41.573629Z",
+      "description": "This model was trained to identify and locate **Isopora crateriformis (ICRA)** using the ultralytics YOLO11 architecture in various underwater conditions. - **Model Architecture**: YOLO11m - **Task**:",
+      "organization": "NMFS-OSI"
+    }
   ]
 }
