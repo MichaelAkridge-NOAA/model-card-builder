@@ -148,8 +148,8 @@ jobs:
       - name: Archive model card in gallery
         if: success() || steps.model-metadata.outcome == 'success'
         run: |
-          mkdir -p gallery/cards
           MODEL_ID="${{ steps.model-metadata.outputs.model_id }}"
+          mkdir -p "$(dirname "gallery/cards/${MODEL_ID}.html")"
           cp Model_Card.html "gallery/cards/${MODEL_ID}.html"
           echo "Archived card as gallery/cards/${MODEL_ID}.html"
 
