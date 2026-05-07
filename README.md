@@ -1,4 +1,4 @@
-# NOAA Model Card Builder
+# Model Card Builder
 
 Model Card Builder is an AI automation pipeline that converts a Hugging Face model URL into a typed model-data card, generates a branded HTML model card, updates a searchable gallery, and publishes the result to GitHub Pages.
 ## Operational Automation
