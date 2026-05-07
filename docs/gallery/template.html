@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Model Card Gallery - Browse and discover machine learning models">
+  <title>Model Card Gallery</title>
+  <style>
+    /* ============================================
+       CSS DESIGN SYSTEM - NOAA Model Gallery
+       ============================================ */
+
+    /* Color Palette */
+    :root {
+      --primary-dark: #003366;
+      --primary-light: #004a94;
+      --accent-orange: #FF6600;
+      --accent-hover: #FF8533;
+      --bg-light: #F5F5F5;
+      --bg-white: #FFFFFF;
+      --text-primary: #333333;
+      --text-secondary: #666666;
+      --text-light: #999999;
+      --border-light: #DDDDDD;
+      --shadow-light: rgba(0, 0, 0, 0.08);
+      --shadow-medium: rgba(0, 0, 0, 0.12);
+      --shadow-hover: rgba(0, 0, 0, 0.16);
+
+      /* Badge colors */
+      --badge-object-detection: #2E7D9F;
+      --badge-image-classification: #2D8659;
+      --badge-nlp: #7B4397;
+      --badge-time-series: #C76C2D;
+      --badge-other: #555555;
+
+      /* Spacing (8px base unit) */
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+
+      /* Typography */
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-size-xs: 12px;
+      --font-size-sm: 14px;
+      --font-size-base: 16px;
+      --font-size-lg: 18px;
+      --font-size-xl: 24px;
+      --font-size-2xl: 32px;
+      --font-weight-normal: 400;
+      --font-weight-medium: 500;
+      --font-weight-bold: 700;
+
+      /* Layout */
+      --max-width: 1400px;
+      --grid-gap-desktop: 24px;
+      --grid-gap-mobile: 16px;
+
+      /* Transitions */
+      --transition-fast: 200ms ease;
+      --transition-base: 300ms ease;
+
+      /* Z-index */
+      --z-controls: 100;
+      --z-modal: 1000;
+    }
+
+    /* ============================================
+       GLOBAL STYLES
+       ============================================ */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      line-height: 1.6;
+      color: var(--text-primary);
+      background-color: var(--bg-light);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: var(--font-weight-bold);
+      line-height: 1.3;
+      margin-bottom: var(--spacing-md);
+    }
+
+    h1 { font-size: var(--font-size-2xl); }
+    h2 { font-size: var(--font-size-xl); }
+    h3 { font-size: var(--font-size-lg); }
+
+    a {
+      color: var(--accent-orange);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+
+    a:hover {
+      color: var(--accent-hover);
+    }
+
+    a:focus-visible {
+      outline: 2px solid var(--accent-orange);
+      outline-offset: 2px;
+    }
+
+    button, input, select {
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+    }
+
+    /* ============================================
+       HEADER & LAYOUT
+       ============================================ */
+
+    .gallery-header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+      color: var(--bg-white);
+      padding: var(--spacing-xl);
+      text-align: center;
+    }
+
+    .header-content {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+
+    .gallery-header h1 {
+      font-size: clamp(24px, 5vw, var(--font-size-2xl));
+      margin-bottom: var(--spacing-md);
+      margin-top: 0;
+    }
+
+    .gallery-header p {
+      font-size: var(--font-size-lg);
+      opacity: 0.95;
+      margin: 0;
+    }
+
+    /* ============================================
+       CONTROLS (Search & Filter)
+       ============================================ */
+
+    .gallery-controls {
+      position: sticky;
+      top: 0;
+      z-index: var(--z-controls);
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border-light);
+      padding: var(--spacing-md);
+      box-shadow: 0 2px 4px var(--shadow-light);
+    }
+
+    .controls-container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      gap: var(--spacing-md);
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .controls-container > div {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-input, .filter-select {
+      width: 100%;
+      padding: var(--spacing-md);
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      font-size: var(--font-size-base);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .search-input {
+      min-width: 250px;
+    }
+
+    .search-input::placeholder {
+      color: var(--text-light);
+    }
+
+    .search-input:focus, .filter-select:focus {
+      outline: none;
+      border-color: var(--accent-orange);
+      box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+    }
+
+    .filter-select {
+      cursor: pointer;
+      background-color: var(--bg-white);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 30px;
+    }
+
+    .result-count {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    /* ============================================
+       MAIN GALLERY
+       ============================================ */
+
+    .gallery-main {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: var(--spacing-xl) var(--spacing-lg);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--grid-gap-desktop);
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Responsive grid */
+    @media (max-width: 1199px) {
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: var(--grid-gap-desktop);
+      }
+    }
+
+    @media (max-width: 767px) {
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: var(--grid-gap-mobile);
+      }
+    }
+
+    @media (max-width: 479px) {
+      .gallery-grid {
+        grid-template-columns: 1fr;
+        gap: var(--grid-gap-mobile);
+      }
+    }
+
+    .gallery-section {
+      margin-bottom: var(--spacing-xl);
+    }
+
+    .gallery-section-title {
+      font-size: var(--font-size-xl);
+      color: var(--primary-dark);
+      margin-bottom: var(--spacing-lg);
+      padding-bottom: var(--spacing-md);
+      border-bottom: 2px solid var(--accent-orange);
+    }
+
+    .no-results {
+      text-align: center;
+      padding: var(--spacing-xl);
+      color: var(--text-secondary);
+    }
+
+    .no-results-icon {
+      font-size: 48px;
+      margin-bottom: var(--spacing-md);
+    }
+
+    /* ============================================
+       CARD COMPONENT
+       ============================================ */
+
+    .model-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: var(--bg-white);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px var(--shadow-light);
+      transition: all var(--transition-fast);
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .model-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px var(--shadow-hover);
+      border-color: var(--accent-orange);
+    }
+
+    .model-card:focus-within {
+      outline: 2px solid var(--accent-orange);
+      outline-offset: -2px;
+    }
+
+    .card-thumbnail {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .card-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .card-thumbnail-placeholder {
+      font-size: 48px;
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      padding: var(--spacing-lg);
+      flex-grow: 1;
+    }
+
+    .card-title {
+      font-size: var(--font-size-lg);
+      color: var(--primary-dark);
+      margin-bottom: var(--spacing-sm);
+      margin-top: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      line-height: 1.4;
+    }
+
+    .pipeline-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
+      color: var(--bg-white);
+      width: fit-content;
+      margin-bottom: var(--spacing-md);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Badge type colors */
+    .pipeline-badge.object-detection {
+      background-color: var(--badge-object-detection);
+    }
+
+    .pipeline-badge.image-classification {
+      background-color: var(--badge-image-classification);
+    }
+
+    .pipeline-badge.nlp {
+      background-color: var(--badge-nlp);
+    }
+
+    .pipeline-badge.time-series {
+      background-color: var(--badge-time-series);
+    }
+
+    .pipeline-badge.other {
+      background-color: var(--badge-other);
+    }
+
+    .card-description {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-md);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      line-height: 1.5;
+      flex-grow: 1;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-md);
+      padding-top: var(--spacing-md);
+      border-top: 1px solid var(--border-light);
+    }
+
+    .card-org {
+      font-size: var(--font-size-xs);
+      color: var(--text-light);
+      font-style: italic;
+      margin: 0;
+    }
+
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: var(--font-weight-bold);
+      color: var(--accent-orange);
+      transition: all var(--transition-fast);
+      padding: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .card-link:hover {
+      color: var(--accent-hover);
+      transform: translateX(4px);
+    }
+
+    .card-link:focus-visible {
+      outline: 2px solid var(--accent-orange);
+      outline-offset: 2px;
+    }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+
+    .gallery-footer {
+      background: var(--bg-light);
+      border-top: 1px solid var(--border-light);
+      padding: var(--spacing-xl) var(--spacing-lg);
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    .gallery-footer p {
+      margin: var(--spacing-sm) 0;
+    }
+
+    .gallery-footer a {
+      color: var(--accent-orange);
+    }
+
+    /* ============================================
+       INTERACTIVE ELEMENTS & SEARCH
+       ============================================ */
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Hidden section when no cards match */
+    .gallery-section.hidden {
+      display: none;
+    }
+
+    /* Card hidden by search */
+    .model-card.hidden {
+      display: none;
+    }
+
+    /* ============================================
+       ACCESSIBILITY
+       ============================================ */
+
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--accent-orange);
+      color: var(--bg-white);
+      padding: 8px;
+      text-decoration: none;
+      border-radius: 0 0 4px 0;
+      font-weight: var(--font-weight-bold);
+    }
+
+    .skip-link:focus {
+      top: 0;
+    }
+
+    /* Keyboard focus visible */
+    :focus-visible {
+      outline: 2px solid var(--accent-orange);
+      outline-offset: 2px;
+    }
+
+    /* ============================================
+       RESPONSIVE ADJUSTMENTS
+       ============================================ */
+
+    @media (max-width: 767px) {
+      .gallery-header {
+        padding: var(--spacing-lg);
+      }
+
+      .gallery-header h1 {
+        font-size: 24px;
+      }
+
+      .gallery-header p {
+        font-size: var(--font-size-base);
+      }
+
+      .gallery-main {
+        padding: var(--spacing-lg) var(--spacing-md);
+      }
+
+      .controls-container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .controls-container > div {
+        min-width: auto;
+      }
+
+      .search-input {
+        min-width: auto;
+      }
+
+      .gallery-footer {
+        padding: var(--spacing-lg) var(--spacing-md);
+      }
+    }
+
+    @media (max-width: 479px) {
+      .gallery-header {
+        padding: var(--spacing-lg) var(--spacing-md);
+      }
+
+      .gallery-header h1 {
+        font-size: 20px;
+        margin-bottom: var(--spacing-sm);
+      }
+
+      .gallery-header p {
+        font-size: var(--font-size-sm);
+      }
+
+      .card-body {
+        padding: var(--spacing-md);
+      }
+
+      .gallery-controls {
+        padding: var(--spacing-md);
+      }
+    }
+
+    /* ============================================
+       PRINT STYLES
+       ============================================ */
+
+    @media print {
+      .gallery-controls,
+      .gallery-footer {
+        display: none;
+      }
+
+      .model-card {
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid var(--border-light);
+      }
+
+      .card-link {
+        text-decoration: underline;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#gallery" class="skip-link">Skip to gallery</a>
+
+  <header class="gallery-header" role="banner">
+    <div class="header-content">
+      <h1>🎯 NOAA Model Gallery</h1>
+      <p>Browse and discover machine learning models</p>
+    </div>
+  </header>
+
+  <div class="gallery-controls" role="search">
+    <div class="controls-container">
+      <div>
+        <input 
+          type="text" 
+          id="search" 
+          class="search-input"
+          placeholder="Search by model name, organization..."
+          aria-label="Search models"
+        >
+      </div>
+      <div>
+        <select 
+          id="pipeline-filter" 
+          class="filter-select"
+          aria-label="Filter by pipeline type"
+        >
+          <option value="">All Pipeline Types</option>
+          {PIPELINE_OPTIONS}
+        </select>
+      </div>
+      <div class="result-count" id="result-count"></div>
+    </div>
+  </div>
+
+  <main class="gallery-main" id="gallery" role="main">
+    {CARDS_BY_PIPELINE}
+  </main>
+
+  <footer class="gallery-footer" role="contentinfo">
+    <p>
+      <strong>NOAA Model Card Gallery</strong> | 
+      Generated by <a href="https://github.com/MichaelAkridge-NOAA/model-card-template" target="_blank" rel="noopener noreferrer">NOAA Model Card Template</a>
+    </p>
+    <p>Total models: <span id="total-cards">{TOTAL_CARDS}</span> | Last updated: {LAST_UPDATED}</p>
+  </footer>
+
+  <script>
+    {SEARCH_FILTER_JS}
+  </script>
+</body>
+</html>

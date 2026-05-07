@@ -1,0 +1,39 @@
+{
+  "_schema_version": "1.0",
+  "_schema_description": "Registry of all generated model cards. Each card entry contains metadata for indexing and gallery display.",
+  "_schema_fields": {
+    "model_id": "Unique identifier derived from HuggingFace URL (e.g., 'yolo11m_esa_coral_detector')",
+    "model_name": "Human-readable model name (e.g., 'YOLO11m ESA Coral Detector')",
+    "model_url": "HuggingFace model repository URL",
+    "card_url": "Relative path to the generated card HTML file (gallery/cards/{model_id}.html)",
+    "pipeline_type": "ML task type: 'object-detection', 'image-classification', 'segmentation', 'other'",
+    "date_added": "ISO 8601 UTC timestamp when card was added to registry",
+    "thumbnail_url": "Optional URL or relative path to model thumbnail image",
+    "description": "Brief 1-2 sentence overview of the model from README",
+    "organization": "HuggingFace organization name for grouping and search"
+  },
+  "cards": [
+    {
+      "model_id": "yolo11m_esa_coral_detector",
+      "model_name": "YOLO11m ESA Coral Detector",
+      "model_url": "https://huggingface.co/example-org/yolo11m-esa-coral-detector",
+      "card_url": "gallery/cards/yolo11m_esa_coral_detector.html",
+      "pipeline_type": "object-detection",
+      "date_added": "2024-01-15T10:30:00Z",
+      "thumbnail_url": "gallery/thumbnails/yolo11m_esa_coral_detector.jpg",
+      "description": "YOLO11 medium model trained for detecting coral species in underwater imagery. Achieves 92% mAP@50 on ESA test set.",
+      "organization": "example-org"
+    },
+    {
+      "model_id": "resnet50_imagenet_classifier",
+      "model_name": "ResNet50 ImageNet Classifier",
+      "model_url": "https://huggingface.co/example-org/resnet50-imagenet",
+      "card_url": "gallery/cards/resnet50_imagenet_classifier.html",
+      "pipeline_type": "image-classification",
+      "date_added": "2024-01-10T14:20:00Z",
+      "thumbnail_url": "gallery/thumbnails/resnet50_imagenet_classifier.jpg",
+      "description": "ResNet50 pretrained on ImageNet-1k for general-purpose image classification. Top-1 accuracy: 76.1%.",
+      "organization": "example-org"
+    }
+  ]
+}

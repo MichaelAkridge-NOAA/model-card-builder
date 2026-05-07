@@ -12,6 +12,21 @@ A Python-based model card builder that fetches Hugging Face metadata into a type
 - 🔄 Automated GitHub Actions workflow
 - 📈 Support for data visualization
 - 🎯 Focus on key metrics and explanations
+- 🌐 Live gallery published via GitHub Pages
+
+### Live Model Gallery
+
+View all generated model cards in the **[Live Gallery](https://MichaelAkridge-NOAA.github.io/model-card-template/gallery/)**
+
+The gallery:
+- Updates automatically whenever a new model card is generated
+- Provides searchable, filterable index of all models
+- Displays model cards with metadata and metrics
+- Works instantly with client-side search (no server required)
+
+**Gallery URL:** https://MichaelAkridge-NOAA.github.io/model-card-template/gallery/
+
+For GitHub Pages setup details, see [GITHUB_PAGES_SETUP.md](./GITHUB_PAGES_SETUP.md)
 
 ### How to Use
 

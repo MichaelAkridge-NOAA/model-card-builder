@@ -1,0 +1,92 @@
+{
+  "_schema_version": "1.0",
+  "_schema_description": "Registry of all generated model cards. Each card entry contains metadata for indexing and gallery display.",
+  "_schema_fields": {
+    "model_id": "Unique identifier derived from HuggingFace URL (e.g., 'yolo11m_esa_coral_detector')",
+    "model_name": "Human-readable model name (e.g., 'YOLO11m ESA Coral Detector')",
+    "model_url": "HuggingFace model repository URL",
+    "card_url": "Relative path to the generated card HTML file (gallery/cards/{model_id}.html)",
+    "pipeline_type": "ML task type: 'object-detection', 'image-classification', 'segmentation', 'other'",
+    "date_added": "ISO 8601 UTC timestamp when card was added to registry",
+    "thumbnail_url": "Optional URL or relative path to model thumbnail image",
+    "description": "Brief 1-2 sentence overview of the model from README",
+    "organization": "HuggingFace organization name for grouping and search"
+  },
+  "cards": [
+    {
+      "model_id": "yolo11m_esa_coral_detector",
+      "model_name": "YOLO11m ESA Coral Detector",
+      "model_url": "https://huggingface.co/example-org/yolo11m-esa-coral-detector",
+      "card_url": "gallery/cards/yolo11m_esa_coral_detector.html",
+      "pipeline_type": "object-detection",
+      "date_added": "2024-01-15T10:30:00Z",
+      "thumbnail_url": "gallery/thumbnails/yolo11m_esa_coral_detector.jpg",
+      "description": "YOLO11 medium model trained for detecting coral species in underwater imagery. Achieves 92% mAP@50 on ESA test set.",
+      "organization": "NMFS-OSI"
+    },
+    {
+      "model_id": "resnet50_imagenet_classifier",
+      "model_name": "ResNet50 ImageNet Classifier",
+      "model_url": "https://huggingface.co/example-org/resnet50-imagenet",
+      "card_url": "gallery/cards/resnet50_imagenet_classifier.html",
+      "pipeline_type": "image-classification",
+      "date_added": "2024-01-10T14:20:00Z",
+      "thumbnail_url": "gallery/thumbnails/resnet50_imagenet_classifier.jpg",
+      "description": "ResNet50 pretrained on ImageNet-1k for general-purpose image classification. Top-1 accuracy: 76.1%.",
+      "organization": "NOAA-AI"
+    },
+    {
+      "model_id": "yolov5_fish_detector",
+      "model_name": "YOLOv5 Fish Species Detector",
+      "model_url": "https://huggingface.co/nmfs-oar/yolov5-fish-detector",
+      "card_url": "gallery/cards/yolov5_fish_detector.html",
+      "pipeline_type": "object-detection",
+      "date_added": "2024-01-12T09:15:00Z",
+      "thumbnail_url": "gallery/thumbnails/yolov5_fish_detector.jpg",
+      "description": "YOLOv5 model optimized for detecting fish species in sonar imagery. Trained on NOAA fisheries data with 88.5% mAP.",
+      "organization": "NMFS-OSI"
+    },
+    {
+      "model_id": "efficientnet_marine_classification",
+      "model_name": "EfficientNet Marine Species Classifier",
+      "model_url": "https://huggingface.co/example-org/efficientnet-marine",
+      "card_url": "gallery/cards/efficientnet_marine_classification.html",
+      "pipeline_type": "image-classification",
+      "date_added": "2024-01-08T13:45:00Z",
+      "thumbnail_url": "gallery/thumbnails/efficientnet_marine_classification.jpg",
+      "description": "EfficientNet-B3 fine-tuned for marine species classification with 94.2% top-1 accuracy on validation set.",
+      "organization": "NOAA-AI"
+    },
+    {
+      "model_id": "faster_rcnn_vessel_detection",
+      "model_name": "Faster R-CNN Vessel Detector",
+      "model_url": "https://huggingface.co/example-org/faster-rcnn-vessel",
+      "card_url": "gallery/cards/faster_rcnn_vessel_detection.html",
+      "pipeline_type": "object-detection",
+      "date_added": "2024-01-05T11:20:00Z",
+      "thumbnail_url": "gallery/thumbnails/faster_rcnn_vessel_detection.jpg",
+      "description": "Faster R-CNN model for detecting and classifying vessels in satellite imagery. 91% precision on test dataset.",
+      "organization": "NMFS-OSI"
+    },
+    {
+      "model_id": "vit_ocean_segmentation",
+      "model_name": "Vision Transformer Ocean Segmentation",
+      "model_url": "https://huggingface.co/example-org/vit-ocean-segmentation",
+      "card_url": "gallery/cards/vit_ocean_segmentation.html",
+      "pipeline_type": "segmentation",
+      "date_added": "2024-01-03T15:30:00Z",
+      "description": "Vision Transformer model for semantic segmentation of ocean features from satellite imagery. Achieves 87% mIoU.",
+      "organization": "NOAA-AI"
+    },
+    {
+      "model_id": "lstm_fisheries_forecast",
+      "model_name": "LSTM Fisheries Catch Forecaster",
+      "model_url": "https://huggingface.co/example-org/lstm-fisheries",
+      "card_url": "gallery/cards/lstm_fisheries_forecast.html",
+      "pipeline_type": "other",
+      "date_added": "2024-01-01T08:00:00Z",
+      "description": "LSTM neural network for forecasting seasonal fisheries catch based on historical data and environmental parameters. RMSE: 12.3%.",
+      "organization": "NMFS-OSI"
+    }
+  ]
+}

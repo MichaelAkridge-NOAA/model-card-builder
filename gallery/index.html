@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOAA Model Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f7fb;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        .page {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        header {
+            background: white;
+            border-bottom: 1px solid #d5e2ef;
+            padding: 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 56, 101, 0.06);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 0 1 auto;
+        }
+
+        .logo {
+            max-width: 80px;
+            height: auto;
+        }
+
+        .header-text h1 {
+            font-size: 1.8rem;
+            color: #005cb9;
+            margin: 0;
+        }
+
+        .header-text p {
+            color: #34495e;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .controls {
+            display: flex;
+            gap: 16px;
+            flex: 0 1 auto;
+            flex-wrap: wrap;
+        }
+
+        .search-input, .pipeline-select {
+            padding: 10px 16px;
+            border: 1px solid #d5e2ef;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .search-input {
+            min-width: 250px;
+            flex: 1;
+        }
+
+        .search-input:focus, .pipeline-select:focus {
+            outline: none;
+            border-color: #005cb9;
+            box-shadow: 0 0 0 3px rgba(0, 92, 185, 0.1);
+        }
+
+        .pipeline-select {
+            min-width: 180px;
+        }
+
+        main {
+            padding: 40px 24px;
+        }
+
+        .pipeline-section {
+            margin-bottom: 60px;
+        }
+
+        .pipeline-section h2 {
+            font-size: 1.8rem;
+            color: #005cb9;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #d9ecff;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .model-card {
+            background: white;
+            border: 1px solid #d5e2ef;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 56, 101, 0.08);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .model-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 56, 101, 0.12);
+            border-color: #005cb9;
+        }
+
+        .card-thumbnail {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: linear-gradient(135deg, #e0eef9 0%, #f3f7fb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #34495e;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 16px;
+            overflow: hidden;
+        }
+
+        .card-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .card-content h3 {
+            margin: 0 0 8px;
+            font-size: 1.2rem;
+            color: #005cb9;
+            word-break: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .pipeline-badge {
+            display: inline-block;
+            margin-bottom: 12px;
+            padding: 6px 12px;
+            background: #d9ecff;
+            color: #005cb9;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            width: fit-content;
+        }
+
+        .pipeline-badge.object-detection {
+            background: #c7e1f3;
+            color: #2E7D9F;
+        }
+
+        .pipeline-badge.image-classification {
+            background: #d1e7dc;
+            color: #2D8659;
+        }
+
+        .pipeline-badge.segmentation {
+            background: #e2d7f0;
+            color: #7B4397;
+        }
+
+        .pipeline-badge.other {
+            background: #e8e6e1;
+            color: #555555;
+        }
+
+        .card-description {
+            margin: 0 0 12px;
+            color: #34495e;
+            font-size: 0.9rem;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-org {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+
+        .card-link {
+            color: #005cb9;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .card-link:hover {
+            color: #003d84;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 24px;
+            color: #34495e;
+        }
+
+        .no-results p {
+            font-size: 1.1rem;
+            margin: 16px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 24px;
+            border-top: 1px solid #d5e2ef;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        footer a {
+            color: #005cb9;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1024px) {
+            .card-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 16px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .controls {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .search-input, .pipeline-select {
+                width: 100%;
+            }
+
+            .header-text h1 {
+                font-size: 1.5rem;
+            }
+
+            main {
+                padding: 24px 16px;
+            }
+
+            .pipeline-section h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .header-text h1 {
+                font-size: 1.3rem;
+            }
+
+            .card-content {
+                padding: 16px;
+            }
+
+            main {
+                padding: 16px 12px;
+            }
+
+            .controls {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .search-input, .pipeline-select {
+                width: 100%;
+                min-width: unset;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header>
+            <div class="header-content">
+                <div class="header-title">
+                    <img src="assets/NOAA_FISHERIES_logoH_web.png" alt="NOAA Fisheries" class="logo">
+                    <div class="header-text">
+                        <h1>Model Gallery</h1>
+                        <p>NOAA Model Card Registry</p>
+                    </div>
+                </div>
+                <div class="controls">
+                    <input type="text" id="search" class="search-input" placeholder="Search models..." aria-label="Search models by name or description">
+                    <select id="pipeline-filter" class="pipeline-select" aria-label="Filter by pipeline type">
+                        <option value="">All Pipeline Types</option>
+                        <option value="image-classification">Image Classification</option>
+                        <option value="object-detection">Object Detection</option>
+                        <option value="segmentation">Segmentation</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <main id="gallery">
+            
+        <section class="pipeline-section" data-pipeline="image-classification">
+            <h2>Image Classification</h2>
+            <div class="card-grid">
+                <div class="model-card" data-model-id="resnet50_imagenet_classifier" data-pipeline="image-classification" data-searchable="resnet50 imagenet classifier resnet50 pretrained on imagenet-1k for general-purpose image classification. top-1 accuracy: 76.1%. noaa-ai">
+                <div class="card-thumbnail">
+                    <img src="gallery/thumbnails/resnet50_imagenet_classifier.jpg" alt="ResNet50 ImageNet Classifier" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3>ResNet50 ImageNet Classifier</h3>
+                    <span class="pipeline-badge image-classification">Image Classification</span>
+                    <p class="card-description">ResNet50 pretrained on ImageNet-1k for general-purpose image classification. Top-1 accuracy: 76.1%.</p>
+                    <p class="card-org">Organization: NOAA-AI</p>
+                    <a href="gallery/cards/resnet50_imagenet_classifier.html" class="card-link">View Full Card →</a>
+                </div>
+            </div>
+                <div class="model-card" data-model-id="efficientnet_marine_classification" data-pipeline="image-classification" data-searchable="efficientnet marine species classifier efficientnet-b3 fine-tuned for marine species classification with 94.2% top-1 accuracy on validation set. noaa-ai">
+                <div class="card-thumbnail">
+                    <img src="gallery/thumbnails/efficientnet_marine_classification.jpg" alt="EfficientNet Marine Species Classifier" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3>EfficientNet Marine Species Classifier</h3>
+                    <span class="pipeline-badge image-classification">Image Classification</span>
+                    <p class="card-description">EfficientNet-B3 fine-tuned for marine species classification with 94.2% top-1 accuracy on validation set.</p>
+                    <p class="card-org">Organization: NOAA-AI</p>
+                    <a href="gallery/cards/efficientnet_marine_classification.html" class="card-link">View Full Card →</a>
+                </div>
+            </div>
+            </div>
+        </section>
+        
+        <section class="pipeline-section" data-pipeline="object-detection">
+            <h2>Object Detection</h2>
+            <div class="card-grid">
+                <div class="model-card" data-model-id="yolo11m_esa_coral_detector" data-pipeline="object-detection" data-searchable="yolo11m esa coral detector yolo11 medium model trained for detecting coral species in underwater imagery. achieves 92% map@50 on esa test set. nmfs-osi">
+                <div class="card-thumbnail">
+                    <img src="gallery/thumbnails/yolo11m_esa_coral_detector.jpg" alt="YOLO11m ESA Coral Detector" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3>YOLO11m ESA Coral Detector</h3>
+                    <span class="pipeline-badge object-detection">Object Detection</span>
+                    <p class="card-description">YOLO11 medium model trained for detecting coral species in underwater imagery. Achieves 92% mAP@50 on ESA test set.</p>
+                    <p class="card-org">Organization: NMFS-OSI</p>
+                    <a href="gallery/cards/yolo11m_esa_coral_detector.html" class="card-link">View Full Card →</a>
+                </div>
+            </div>
+                <div class="model-card" data-model-id="yolov5_fish_detector" data-pipeline="object-detection" data-searchable="yolov5 fish species detector yolov5 model optimized for detecting fish species in sonar imagery. trained on noaa fisheries data with 88.5% map. nmfs-osi">
+                <div class="card-thumbnail">
+                    <img src="gallery/thumbnails/yolov5_fish_detector.jpg" alt="YOLOv5 Fish Species Detector" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3>YOLOv5 Fish Species Detector</h3>
+                    <span class="pipeline-badge object-detection">Object Detection</span>
+                    <p class="card-description">YOLOv5 model optimized for detecting fish species in sonar imagery. Trained on NOAA fisheries data with 88.5% mAP.</p>
+                    <p class="card-org">Organization: NMFS-OSI</p>
+                    <a href="gallery/cards/yolov5_fish_detector.html" class="card-link">View Full Card →</a>
+                </div>
+            </div>
+                <div class="model-card" data-model-id="faster_rcnn_vessel_detection" data-pipeline="object-detection" data-searchable="faster r-cnn vessel detector faster r-cnn model for detecting and classifying vessels in satellite imagery. 91% precision on test dataset. nmfs-osi">
+                <div class="card-thumbnail">
+                    <img src="gallery/thumbnails/faster_rcnn_vessel_detection.jpg" alt="Faster R-CNN Vessel Detector" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3>Faster R-CNN Vessel Detector</h3>
+                    <span class="pipeline-badge object-detection">Object Detection</span>
+                    <p class="card-description">Faster R-CNN model for detecting and classifying vessels in satellite imagery. 91% precision on test dataset.</p>
+                    <p class="card-org">Organization: NMFS-OSI</p>
+                    <a href="gallery/cards/faster_rcnn_vessel_detection.html" class="card-link">View Full Card →</a>
+                </div>
+            </div>
+            </div>
+        </section>
+        
+        <section class="pipeline-section" data-pipeline="segmentation">
+            <h2>Segmentation</h2>
+            <div class="card-grid">
+                <div class="model-card" data-model-id="vit_ocean_segmentation" data-pipeline="segmentation" data-searchable="vision transformer ocean segmentation vision transformer model for semantic segmentation of ocean features from satellite imagery. achieves 87% miou. noaa-ai">
+                <div class="card-thumbnail">
+                    <img src="gallery/thumbnails/vit_ocean_segmentation.jpg" alt="Vision Transformer Ocean Segmentation" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3>Vision Transformer Ocean Segmentation</h3>
+                    <span class="pipeline-badge segmentation">Segmentation</span>
+                    <p class="card-description">Vision Transformer model for semantic segmentation of ocean features from satellite imagery. Achieves 87% mIoU.</p>
+                    <p class="card-org">Organization: NOAA-AI</p>
+                    <a href="gallery/cards/vit_ocean_segmentation.html" class="card-link">View Full Card →</a>
+                </div>
+            </div>
+            </div>
+        </section>
+        
+        <section class="pipeline-section" data-pipeline="other">
+            <h2>Other</h2>
+            <div class="card-grid">
+                <div class="model-card" data-model-id="lstm_fisheries_forecast" data-pipeline="other" data-searchable="lstm fisheries catch forecaster lstm neural network for forecasting seasonal fisheries catch based on historical data and environmental parameters. rmse: 12.3%. nmfs-osi">
+                <div class="card-thumbnail">
+                    <img src="gallery/thumbnails/lstm_fisheries_forecast.jpg" alt="LSTM Fisheries Catch Forecaster" loading="lazy">
+                </div>
+                <div class="card-content">
+                    <h3>LSTM Fisheries Catch Forecaster</h3>
+                    <span class="pipeline-badge other">Other</span>
+                    <p class="card-description">LSTM neural network for forecasting seasonal fisheries catch based on historical data and environmental parameters. RMSE: 12.3%.</p>
+                    <p class="card-org">Organization: NMFS-OSI</p>
+                    <a href="gallery/cards/lstm_fisheries_forecast.html" class="card-link">View Full Card →</a>
+                </div>
+            </div>
+            </div>
+        </section>
+        
+        </main>
+
+        <footer>
+            Generated by <strong>NOAA Model Card Template</strong> | 
+            <a href="https://github.com/MichaelAkridge-NOAA/model-card-template">GitHub</a> | 
+            <span id="card-count">7 models</span>
+        </footer>
+    </div>
+
+    <script>
+        (function() {
+            const cards = document.querySelectorAll(''.model-card'');
+            const sections = document.querySelectorAll(''.pipeline-section'');
+            const searchInput = document.getElementById(''search'');
+            const pipelineFilter = document.getElementById(''pipeline-filter'');
+            const gallery = document.getElementById(''gallery'');
+            const cardCountSpan = document.getElementById(''card-count'');
+
+            function updateCardCount() {
+                const visibleCards = document.querySelectorAll(''.model-card:not(.hidden)'');
+                cardCountSpan.textContent = visibleCards.length + '' model'' + (visibleCards.length !== 1 ? ''s'' : '''');
+            }
+
+            function filterCards() {
+                const query = searchInput.value.toLowerCase().trim();
+                const selectedPipeline = pipelineFilter.value;
+                let visibleSections = 0;
+                let totalVisibleCards = 0;
+
+                sections.forEach(function(section) {
+                    const sectionPipeline = section.dataset.pipeline;
+                    let visibleCardsInSection = 0;
+
+                    const sectionCards = section.querySelectorAll(''.model-card'');
+                    sectionCards.forEach(function(card) {
+                        const searchable = card.dataset.searchable.toLowerCase();
+                        const cardPipeline = card.dataset.pipeline;
+
+                        const matchesSearch = query === '''' || searchable.includes(query);
+                        const matchesPipeline = selectedPipeline === '''' || cardPipeline === selectedPipeline;
+                        const shouldShow = matchesSearch && matchesPipeline;
+
+                        card.classList.toggle(''hidden'', !shouldShow);
+                        if (shouldShow) {
+                            visibleCardsInSection++;
+                            totalVisibleCards++;
+                        }
+                    });
+
+                    const pipelineMatches = selectedPipeline === '''' || sectionPipeline === selectedPipeline;
+                    const shouldShowSection = visibleCardsInSection > 0 && pipelineMatches;
+                    section.classList.toggle(''hidden'', !shouldShowSection);
+                    if (shouldShowSection) {
+                        visibleSections++;
+                    }
+                });
+
+                if (totalVisibleCards === 0 && (query !== '''' || selectedPipeline !== '''')) {
+                    showNoResults();
+                } else {
+                    hideNoResults();
+                }
+
+                updateCardCount();
+            }
+
+            function showNoResults() {
+                if (document.getElementById(''no-results'')) return;
+                const noResults = document.createElement(''div'');
+                noResults.id = ''no-results'';
+                noResults.className = ''no-results'';
+                noResults.innerHTML = ''<p>😕 No models match your search</p><p>Try adjusting your filters or search terms.</p>'';
+                gallery.appendChild(noResults);
+            }
+
+            function hideNoResults() {
+                const noResults = document.getElementById(''no-results'');
+                if (noResults) {
+                    noResults.remove();
+                }
+            }
+
+            searchInput.addEventListener(''keyup'', filterCards);
+            searchInput.addEventListener(''change'', filterCards);
+            pipelineFilter.addEventListener(''change'', filterCards);
+
+            searchInput.addEventListener(''keydown'', function(e) {
+                if (e.key === ''Enter'') {
+                    filterCards();
+                }
+            });
+
+            filterCards();
+        })();
+    </script>
+</body>
+</html>

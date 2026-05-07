@@ -302,7 +302,7 @@ def _asset_url(path: Optional[str], output_path: Optional[str]) -> Optional[str]
     if path.startswith("http://") or path.startswith("https://"):
         return html.escape(path, quote=True)
 
-    normalized = os.path.normpath(path)
+    normalized = _normalize_local_path(path)
     inline_asset = _inline_local_asset(normalized, output_path)
     if inline_asset:
         return inline_asset
@@ -331,3 +331,8 @@ def _inline_local_asset(path: str, output_path: Optional[str]) -> Optional[str]:
     with open(asset_path, "rb") as asset_file:
         encoded = base64.b64encode(asset_file.read()).decode("ascii")
     return f"data:{mime_type};base64,{encoded}"
+
+
+def _normalize_local_path(path: str) -> str:
+    normalized = path.replace("\\", os.sep).replace("/", os.sep)
+    return os.path.normpath(normalized)
