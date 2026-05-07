@@ -197,8 +197,8 @@ jobs:
           cp -r assets/ site/gallery/assets/
           cp docs/index.html site/index.html
           echo "✓ Prepared site/ from gallery source-of-truth"
-          echo "   Root URL: https://MichaelAkridge-NOAA.github.io/model-card-template/"
-          echo "   Gallery URL: https://MichaelAkridge-NOAA.github.io/model-card-template/gallery/"
+          echo "   Root URL: https://MichaelAkridge-NOAA.github.io/model-card-builder/"
+          echo "   Gallery URL: https://MichaelAkridge-NOAA.github.io/model-card-builder/gallery/"
 
       - name: Commit gallery updates
         if: success() || steps.update-registry.outcome != 'failure'
@@ -277,7 +277,7 @@ jobs:
              - Summary logs
              - Build logs
           
-          Generated using [NOAA Model Card Template](https://github.com/noaa-fisheries/model-card-template)
+          Generated using [NOAA Model Card Builder](https://github.com/MichaelAkridge-NOAA/model-card-builder)
           
           ---
           *If you notice any issues, please check the build logs in the artifacts*"

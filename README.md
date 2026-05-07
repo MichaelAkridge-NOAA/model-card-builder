@@ -66,7 +66,7 @@ Workflow file: .github/workflows/model-card-builder.yml
 
 Live gallery:
 
-- https://MichaelAkridge-NOAA.github.io/model-card-template/gallery/
+- https://MichaelAkridge-NOAA.github.io/model-card-builder/gallery/
 
 ## Architecture Notes
 
