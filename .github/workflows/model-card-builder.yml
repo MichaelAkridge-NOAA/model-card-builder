@@ -139,6 +139,8 @@ jobs:
                          "A machine learning model").rstrip()
           if len(description) < 200 and model_data.get("overview"):
               description = model_data.get("overview", "")[:200]
+            # GitHub step outputs must be single-line key=value entries unless using delimiter blocks.
+            description = re.sub(r"\s+", " ", str(description)).strip()
           
           # Output for next steps using GITHUB_OUTPUT (replaces deprecated set-output)
           import os
