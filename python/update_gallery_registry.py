@@ -87,7 +87,7 @@ def add_card_to_registry(
         "model_id": model_id,
         "model_name": model_name,
         "model_url": model_url,
-        "card_url": f"gallery/cards/{model_id}.html",
+        "card_url": f"cards/{model_id}.html",
         "pipeline_type": pipeline_type,
         "date_added": now,
         "description": description,

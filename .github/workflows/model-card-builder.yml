@@ -125,9 +125,9 @@ jobs:
           org_match = re.search(r'huggingface\.co/([^/]+)/', model_url)
           organization = org_match.group(1) if org_match else "unknown"
           
-          # Get pipeline_type from model data
-          pipeline_type = model_data.get("model", {}).get("task_name", "other")
-          if not pipeline_type or pipeline_type == "unknown":
+          # Get pipeline_type from model data (stored under metadata["Model Type"] in the contract)
+          pipeline_type = model_data.get("metadata", {}).get("Model Type", "").strip()
+          if not pipeline_type or pipeline_type in ("unknown", "default"):
               pipeline_type = "other"
           
           # Get model name
@@ -194,6 +194,7 @@ jobs:
           rm -rf site
           mkdir -p site/gallery
           cp -r gallery/* site/gallery/
+          cp -r assets/ site/gallery/assets/
           cp docs/index.html site/index.html
           echo "✓ Prepared site/ from gallery source-of-truth"
           echo "   Root URL: https://MichaelAkridge-NOAA.github.io/model-card-template/"
