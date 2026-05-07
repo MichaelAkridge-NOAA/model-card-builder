@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>akridge/yolo11m-sea-urchin-detector</title>
+  <style>
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f3f7fb;
+  color: #1a1a1a;
+}
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+}
+
+.masthead {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.template-badge {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #d9ecff;
+  color: #005cb9;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0 0 8px;
+  color: #005cb9;
+  font-size: 2.4rem;
+}
+
+.subtitle {
+  margin: 0;
+  color: #34495e;
+  font-size: 1rem;
+}
+
+.logo {
+  display: block;
+  max-width: 240px;
+  margin: 0 auto 18px;
+}
+
+.section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.card-section {
+  background: #ffffff;
+  border: 1px solid #d5e2ef;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 56, 101, 0.08);
+}
+
+.card-section h2 {
+  margin-top: 0;
+  color: #005cb9;
+}
+
+.block-title {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.metric-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.metric-table th,
+.metric-table td {
+  padding: 10px;
+  border-bottom: 1px solid #d5e2ef;
+  text-align: left;
+  vertical-align: top;
+}
+
+.metric-table th {
+  color: #005cb9;
+}
+
+.metric-value {
+  font-weight: 700;
+}
+
+.image-block {
+  margin-top: 16px;
+}
+
+.image-block img {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #d5e2ef;
+}
+
+.image-block figcaption {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #4f6578;
+}
+
+.key-value-list,
+.bullet-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.key-value-list li,
+.bullet-list li {
+  margin-bottom: 8px;
+}
+
+.footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #d5e2ef;
+  color: #4f6578;
+  font-size: 0.95rem;
+  text-align: center;
+}
+</style>
+</head>
+<body class="theme-noaa">
+  <main class="page template-standard">
+    <header class="masthead">
+      <img class="logo" src="assets/assets/NOAA_FISHERIES_logoH_web.png" alt="Organization logo">
+      <div class="template-badge">standard template</div>
+      <h1 class="title">akridge/yolo11m-sea-urchin-detector</h1>
+      <p class="subtitle">Version 284f47b505889dd309e7419824e74353d1ed049a | 2025-01-27</p>
+    </header>
+    <section class="section-grid">
+      
+<article class="card-section">
+  <h2>Model Summary</h2>
+  <div class="text-block"><p>This YOLO11m-based model is designed for detecting sea urchins in underwater environments. It is optimized for real-time and post-processed video analysis, trained on diverse open-source datasets.</p></div>
+</article>
+
+
+<article class="card-section">
+  <h2>Intended Use</h2>
+  <div class="text-block"><ul>
+<li>Real-time detections on underwater footage</li>
+<li>Post-processed video/imagery for detecting sea urchins in underwater environments</li>
+</ul></div>
+</article>
+
+
+<article class="card-section">
+  <h2>Model Performance</h2>
+  
+<table class="metric-table">
+  <thead>
+    <tr>
+      <th>Metric</th>
+      <th>Value</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+        <tr>
+          <td>mAP50-95 (B)</td>
+          <td class="metric-value">0.569</td>
+          <td>Mean Average Precision at IoU thresholds from 0.5 to 0.95 for bounding box predictions</td>
+        </tr>
+        
+
+        <tr>
+          <td>Inference time (ms/im)</td>
+          <td class="metric-value">23.690</td>
+          <td>Average time taken to process one image during inference</td>
+        </tr>
+        
+
+        <tr>
+          <td>FPS</td>
+          <td class="metric-value">42.210</td>
+          <td>Frames per second processed during inference</td>
+        </tr>
+        
+  </tbody>
+</table>
+
+
+<figure class="image-block">
+  <img src="https://huggingface.co/akridge/yolo11m-sea-urchin-detector/resolve/main/results_h.png" alt="Precision recall curve">
+  <figcaption>Precision-recall curve</figcaption>
+</figure>
+
+</article>
+
+
+<article class="card-section">
+  <h2>Training Details</h2>
+  <div class="text-block"><ul>
+<li><strong>Training Images</strong>: 1169</li>
+<li><strong>Validation Images</strong>: 334</li>
+<li><strong>Test Images</strong>: 168</li>
+<li>
+<p><strong>Train/Val/Test Split Ratio</strong>: 7:2:1</p>
+</li>
+<li>
+<p><strong>Model Weights File</strong>: <code>yolo11m_urchin_trained.pt</code></p>
+</li>
+<li><strong>Number of Epochs</strong>: 100</li>
+<li><strong>Learning Rate</strong>: 0.001</li>
+<li><strong>Batch Size</strong>: 32</li>
+<li><strong>Image Size</strong>: 640x640</li>
+</ul></div>
+</article>
+
+
+<article class="card-section">
+  <h2>Usage Guide</h2>
+  <div class="text-block"><h3>How to Use the Model</h3>
+<p>To use the trained model, follow these steps:</p>
+<ol>
+<li><strong>Load the Model</strong>:
+   ```python
+   from ultralytics import YOLO</li>
+</ol>
+<p># Load the model
+   model = YOLO("yolo11m_urchin_trained.pt")</p></div>
+
+<section>
+  <h3 class="block-title">Technical Details</h3>
+  <ul class="key-value-list">
+    <li><strong>Architecture:</strong> YOLO11m</li>
+<li><strong>Input Size:</strong> 640x640</li>
+<li><strong>Training Data:</strong> **Training Images**: 1169</li>
+  </ul>
+</section>
+
+
+<section>
+  <h3 class="block-title">Confidence Threshold Settings</h3>
+  <ul class="bullet-list">
+    <li>0.20: Maximum recall, more false positives</li>
+<li>0.50: Balanced detection (default)</li>
+<li>0.80: High precision, fewer false positives</li>
+  </ul>
+</section>
+
+</article>
+
+
+<article class="card-section">
+  <h2>Limitations</h2>
+  <div class="text-block"><p>The model was trained on a mix of open source images. It may not generalize well to other environments or non-marine scenarios. Additionally, environmental variations, occlusions, or poor lighting may affect performance.</p></div>
+</article>
+
+
+<article class="card-section">
+  <h2>Model Metadata</h2>
+  
+<section>
+  <h3 class="block-title">Repository Metadata</h3>
+  <ul class="key-value-list">
+    <li><strong>Model Type:</strong> object-detection</li>
+<li><strong>Downloads:</strong> 10</li>
+<li><strong>Base Model:</strong> Ultralytics/YOLO11</li>
+<li><strong>Tags:</strong> yolo, yolo11, yolo11m, urchin, sea, marine-detection</li>
+  </ul>
+</section>
+
+</article>
+
+    </section>
+    <footer class="footer">NOAA / CIMAR | Contact: michael.akridge@noaa.gov | Version 1.0 | 2025</footer>
+  </main>
+</body>
+</html>
