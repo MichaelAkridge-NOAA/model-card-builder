@@ -321,6 +321,7 @@
                     <input type="text" id="search" class="search-input" placeholder="Search models..." aria-label="Search models">
                     <select id="pipeline-filter" class="pipeline-select" aria-label="Filter by pipeline type">
                         <option value="">All Pipeline Types</option>
+                        <option value="image-classification">Image Classification</option>
                         <option value="object-detection">Object Detection</option>
                     </select>
                 </div>
@@ -329,6 +330,24 @@
 
         <main id="gallery">
             
+        <section class="pipeline-section" data-pipeline="image-classification">
+            <h2>Image Classification</h2>
+            <div class="card-grid">
+                <div class="model-card" data-model-id="NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t1" data-pipeline="image-classification" data-searchable="Nmfs Osi/Yolo11M Cls Noaa Pacific Benthic Cover T1 A YOLO11m image classification model trained to classify **broad benthic cover categories (Tier-1)** in underwater reef imagery from NOAA Pacific Islands surveys. The model achieves **71.0% top-1 accu NMFS-OSI">
+                <div class="card-thumbnail">
+                    <div style="display: flex; flex-direction: column; justify-content: center; text-align: center; height: 100%;"><strong>Nmfs Osi/Yolo11M Cls Noaa Pacific Benthic Cover T1</strong><small style="color: #7f8c8d;">NMFS-OSI</small></div>
+                </div>
+                <div class="card-content">
+                    <h3>Nmfs Osi/Yolo11M Cls Noaa Pacific Benthic Cover T1</h3>
+                    <span class="pipeline-badge">Image Classification</span>
+                    <p class="card-description">A YOLO11m image classification model trained to classify **broad benthic cover categories (Tier-1)** in underwater reef imagery from NOAA Pacific Islands surveys. The model achieves **71.0% top-1 accu</p>
+                    <p class="card-org">Organization: NMFS-OSI</p>
+                    <a href="cards/NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t1.html" class="card-link">View Full Card →</a>
+                </div>
+            </div>
+            </div>
+        </section>
+        
         <section class="pipeline-section" data-pipeline="object-detection">
             <h2>Object Detection</h2>
             <div class="card-grid">
@@ -337,7 +356,7 @@
                     <div style="display: flex; flex-direction: column; justify-content: center; text-align: center; height: 100%;"><strong>Nmfs Osi/Yolo11M Esa Coral Icra Detector</strong><small style="color: #7f8c8d;">NMFS-OSI</small></div>
                 </div>
                 <div class="card-content">
-                    <h3>NMFS-OSI/yolo11m-esa-coral-icra-detector</h3>
+                    <h3>Nmfs Osi/Yolo11M Esa Coral Icra Detector</h3>
                     <span class="pipeline-badge">Object Detection</span>
                     <p class="card-description">This model was trained to identify and locate **Isopora crateriformis (ICRA)** using the ultralytics YOLO11 architecture in various underwater conditions. - **Model Architecture**: YOLO11m - **Task**:</p>
                     <p class="card-org">Organization: NMFS-OSI</p>

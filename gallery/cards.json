@@ -14,6 +14,16 @@
   },
   "cards": [
     {
+      "model_id": "NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t1",
+      "model_name": "Nmfs Osi/Yolo11M Cls Noaa Pacific Benthic Cover T1",
+      "model_url": "https://huggingface.co/NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t1",
+      "card_url": "cards/NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t1.html",
+      "pipeline_type": "image-classification",
+      "date_added": "2026-05-07T19:46:12.789366Z",
+      "description": "A YOLO11m image classification model trained to classify **broad benthic cover categories (Tier-1)** in underwater reef imagery from NOAA Pacific Islands surveys. The model achieves **71.0% top-1 accu",
+      "organization": "NMFS-OSI"
+    },
+    {
       "model_id": "NMFS-OSI/yolo11m-esa-coral-icra-detector",
       "model_name": "Nmfs Osi/Yolo11M Esa Coral Icra Detector",
       "model_url": "https://huggingface.co/NMFS-OSI/yolo11m-esa-coral-icra-detector",
