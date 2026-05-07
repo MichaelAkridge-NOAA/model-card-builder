@@ -204,7 +204,7 @@ def _generate_empty_gallery_html() -> str:
 <body>
     <div class="page">
         <header>
-            <img src="assets/NOAA_FISHERIES_logoH_web.png" alt="NOAA Fisheries" class="logo">
+            <img src="assets/optics_si_logo_v1.png" alt="Optics SI" class="logo">
             <h1>Model Gallery</h1>
             <p class="subtitle">NOAA Model Card Registry</p>
         </header>
@@ -400,6 +400,8 @@ def _generate_gallery_html_content(cards: List[Dict], grouped: Dict[str, List[Di
             display: flex;
             flex-direction: column;
             height: 100%;
+            position: relative;
+            cursor: pointer;
         }}
 
         .model-card:hover {{
@@ -474,6 +476,13 @@ def _generate_gallery_html_content(cards: List[Dict], grouped: Dict[str, List[Di
             font-weight: 600;
             font-size: 0.9rem;
             transition: color 0.3s ease;
+        }}
+
+        .card-link::after {{
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 1;
         }}
 
         .card-link:hover {{
@@ -571,7 +580,7 @@ def _generate_gallery_html_content(cards: List[Dict], grouped: Dict[str, List[Di
         <header>
             <div class="header-content">
                 <div class="header-title">
-                    <img src="assets/NOAA_FISHERIES_logoH_web.png" alt="NOAA Fisheries" class="logo">
+                    <img src="assets/optics_si_logo_v1.png" alt="Optics SI" class="logo">
                     <div class="header-text">
                         <h1>Model Gallery</h1>
                         <p>NOAA Model Card Registry</p>
