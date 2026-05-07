@@ -1,22 +1,8 @@
 # Model Card Builder
 
 Model Card Builder is an AI automation pipeline that converts a Hugging Face model URL into a typed model-data card, generates a branded HTML model card, updates a searchable gallery, and publishes the result to GitHub Pages.
-## Operational Automation
 
-```mermaid
-flowchart LR
-    A[Trigger: workflow_dispatch or labeled issue] --> B[Extract Hugging Face URL]
-    B --> C[Fetch model data\npython/fetch_hf_model_card.py]
-    C --> D[AI enrichment\npython/summarize_model_card.py]
-    D --> E[Prompt input\nprompts/summarize.prompt.yaml]
-    D --> F[Recovery prompt\nprompts/recover_model_card_facets.prompt.yaml]
-    D --> G[Build HTML\npython/build.py]
-    G --> H[Archive card\ngallery/cards/<model_id>.html]
-    H --> I[Update registry\npython/update_gallery_registry.py]
-    I --> J[Generate gallery index\npython/generate_gallery.py]
-    J --> K[Publish to GitHub Pages]
-```
-
+![Pipeline](./assets/pipeline.png)
 ![Example Model Card](./assets/model_card_template_example.png)
 
 ## What It Does
@@ -48,9 +34,21 @@ The builder integrates with Hugging Face at multiple layers:
 
 This logic is implemented primarily in python/model_card_data.py and feeds downstream rendering and gallery publication steps.
 
-## Local Development
+## Operational Automation
 
-For local setup and command-line usage, see [LOCAL_QUICKSTART.md](./LOCAL_QUICKSTART.md).
+```mermaid
+flowchart LR
+    A[Trigger: workflow_dispatch or labeled issue] --> B[Extract Hugging Face URL]
+    B --> C[Fetch model data\npython/fetch_hf_model_card.py]
+    C --> D[AI enrichment\npython/summarize_model_card.py]
+    D --> E[Prompt input\nprompts/summarize.prompt.yaml]
+    D --> F[Recovery prompt\nprompts/recover_model_card_facets.prompt.yaml]
+    D --> G[Build HTML\npython/build.py]
+    G --> H[Archive card\ngallery/cards/<model_id>.html]
+    H --> I[Update registry\npython/update_gallery_registry.py]
+    I --> J[Generate gallery index\npython/generate_gallery.py]
+    J --> K[Publish to GitHub Pages]
+```
 
 ## Automation and Publishing
 
@@ -74,6 +72,10 @@ Live gallery:
 - Theme: named visual treatment applied by the renderer
 
 Model Card Builder uses these internal extension points while presenting a single automated pipeline at the product level.
+
+## Local Development
+
+For local setup and command-line usage, see [LOCAL_QUICKSTART.md](./LOCAL_QUICKSTART.md).
 
 ## References
 
