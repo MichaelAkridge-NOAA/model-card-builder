@@ -9,7 +9,7 @@ from typing import Any, Optional
 import requests
 import yaml
 
-from model_card_data import (
+from python.model_card_data import (
     apply_targeted_recovery,
     assess_model_card_data,
     extract_repo_id,
@@ -240,7 +240,7 @@ def main() -> int:
     )
     parser.add_argument("--url", required=True, help="Hugging Face model URL or org/model repo id")
     parser.add_argument("--data", required=True, help="Path to model_data.json")
-    parser.add_argument("--prompt", required=True, help="Path to summarize.prompt.yaml")
+    parser.add_argument("--prompt", required=True, help="Path to prompts/summarize.prompt.yaml")
     parser.add_argument("--recovery-prompt", help="Path to targeted recovery prompt")
     parser.add_argument("--endpoint", default=DEFAULT_ENDPOINT, help="GitHub Models inference endpoint")
     args = parser.parse_args()

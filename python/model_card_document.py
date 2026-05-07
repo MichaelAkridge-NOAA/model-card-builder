@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional, Union
 
-from model_card_data import Metric, ModelCardData, infer_pipeline_tag
+from python.model_card_data import Metric, ModelCardData, infer_pipeline_tag
 
 
 SUPPORTED_TEMPLATES = {"standard"}

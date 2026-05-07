@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 
-REGISTRY_PATH = Path(__file__).parent / "cards.json"
+REGISTRY_PATH = Path(__file__).resolve().parent.parent / "gallery" / "cards.json"
 REQUIRED_FIELDS = {"model_id", "model_name", "model_url", "pipeline_type", "organization", "date_added"}
 
 
@@ -62,7 +62,7 @@ def add_card_to_registry(
         raise ValueError("description must be a non-empty string")
     
     # Load existing registry or create empty structure
-    if registry_path.exists():
+    if registry_path.exists() and registry_path.stat().st_size > 0:
         with open(registry_path, "r") as f:
             data = json.load(f)
     else:
@@ -120,7 +120,7 @@ def validate_registry(registry_path: Path = REGISTRY_PATH) -> tuple[bool, List[s
     """
     errors = []
     
-    if not registry_path.exists():
+    if not registry_path.exists() or registry_path.stat().st_size == 0:
         # Empty registry is valid
         return True, []
     

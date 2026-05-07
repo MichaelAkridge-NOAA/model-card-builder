@@ -311,10 +311,7 @@
                     <input type="text" id="search" class="search-input" placeholder="Search models..." aria-label="Search models">
                     <select id="pipeline-filter" class="pipeline-select" aria-label="Filter by pipeline type">
                         <option value="">All Pipeline Types</option>
-                        <option value="image-classification">Image Classification</option>
                         <option value="object-detection">Object Detection</option>
-                        <option value="other">Other</option>
-                        <option value="segmentation">Segmentation</option>
                     </select>
                 </div>
             </div>
@@ -322,109 +319,19 @@
 
         <main id="gallery">
             
-        <section class="pipeline-section" data-pipeline="image-classification">
-            <h2>Image Classification</h2>
-            <div class="card-grid">
-                <div class="model-card" data-model-id="resnet50_imagenet_classifier" data-pipeline="image-classification" data-searchable="ResNet50 ImageNet Classifier ResNet50 pretrained on ImageNet-1k for general-purpose image classification. Top-1 accuracy: 76.1%. NOAA-AI">
-                <div class="card-thumbnail">
-                    <img src="gallery/thumbnails/resnet50_imagenet_classifier.jpg" alt="ResNet50 ImageNet Classifier" loading="lazy">
-                </div>
-                <div class="card-content">
-                    <h3>ResNet50 ImageNet Classifier</h3>
-                    <span class="pipeline-badge">Image Classification</span>
-                    <p class="card-description">ResNet50 pretrained on ImageNet-1k for general-purpose image classification. Top-1 accuracy: 76.1%.</p>
-                    <p class="card-org">Organization: NOAA-AI</p>
-                    <a href="gallery/cards/resnet50_imagenet_classifier.html" class="card-link">View Full Card →</a>
-                </div>
-            </div>
-            <div class="model-card" data-model-id="efficientnet_marine_classification" data-pipeline="image-classification" data-searchable="EfficientNet Marine Species Classifier EfficientNet-B3 fine-tuned for marine species classification with 94.2% top-1 accuracy on validation set. NOAA-AI">
-                <div class="card-thumbnail">
-                    <img src="gallery/thumbnails/efficientnet_marine_classification.jpg" alt="EfficientNet Marine Species Classifier" loading="lazy">
-                </div>
-                <div class="card-content">
-                    <h3>EfficientNet Marine Species Classifier</h3>
-                    <span class="pipeline-badge">Image Classification</span>
-                    <p class="card-description">EfficientNet-B3 fine-tuned for marine species classification with 94.2% top-1 accuracy on validation set.</p>
-                    <p class="card-org">Organization: NOAA-AI</p>
-                    <a href="gallery/cards/efficientnet_marine_classification.html" class="card-link">View Full Card →</a>
-                </div>
-            </div>
-            </div>
-        </section>
-        
         <section class="pipeline-section" data-pipeline="object-detection">
             <h2>Object Detection</h2>
             <div class="card-grid">
-                <div class="model-card" data-model-id="yolo11m_esa_coral_detector" data-pipeline="object-detection" data-searchable="YOLO11m ESA Coral Detector YOLO11 medium model trained for detecting coral species in underwater imagery. Achieves 92% mAP@50 on ESA test set. NMFS-OSI">
+                <div class="model-card" data-model-id="akridge/yolo11m-sea-urchin-detector" data-pipeline="object-detection" data-searchable="YOLO11m Sea Urchin Detector This YOLO11m-based model is designed for detecting sea urchins in underwater environments. It is optimized for real-time and post-processed video analysis, trained on diverse open-source datasets. akridge">
                 <div class="card-thumbnail">
-                    <img src="gallery/thumbnails/yolo11m_esa_coral_detector.jpg" alt="YOLO11m ESA Coral Detector" loading="lazy">
+                    <div style="display: flex; flex-direction: column; justify-content: center; text-align: center; height: 100%;"><strong>YOLO11m Sea Urchin Detector</strong><small style="color: #7f8c8d;">akridge</small></div>
                 </div>
                 <div class="card-content">
-                    <h3>YOLO11m ESA Coral Detector</h3>
+                    <h3>YOLO11m Sea Urchin Detector</h3>
                     <span class="pipeline-badge">Object Detection</span>
-                    <p class="card-description">YOLO11 medium model trained for detecting coral species in underwater imagery. Achieves 92% mAP@50 on ESA test set.</p>
-                    <p class="card-org">Organization: NMFS-OSI</p>
-                    <a href="gallery/cards/yolo11m_esa_coral_detector.html" class="card-link">View Full Card →</a>
-                </div>
-            </div>
-            <div class="model-card" data-model-id="yolov5_fish_detector" data-pipeline="object-detection" data-searchable="YOLOv5 Fish Species Detector YOLOv5 model optimized for detecting fish species in sonar imagery. Trained on NOAA fisheries data with 88.5% mAP. NMFS-OSI">
-                <div class="card-thumbnail">
-                    <img src="gallery/thumbnails/yolov5_fish_detector.jpg" alt="YOLOv5 Fish Species Detector" loading="lazy">
-                </div>
-                <div class="card-content">
-                    <h3>YOLOv5 Fish Species Detector</h3>
-                    <span class="pipeline-badge">Object Detection</span>
-                    <p class="card-description">YOLOv5 model optimized for detecting fish species in sonar imagery. Trained on NOAA fisheries data with 88.5% mAP.</p>
-                    <p class="card-org">Organization: NMFS-OSI</p>
-                    <a href="gallery/cards/yolov5_fish_detector.html" class="card-link">View Full Card →</a>
-                </div>
-            </div>
-            <div class="model-card" data-model-id="faster_rcnn_vessel_detection" data-pipeline="object-detection" data-searchable="Faster R-CNN Vessel Detector Faster R-CNN model for detecting and classifying vessels in satellite imagery. 91% precision on test dataset. NMFS-OSI">
-                <div class="card-thumbnail">
-                    <img src="gallery/thumbnails/faster_rcnn_vessel_detection.jpg" alt="Faster R-CNN Vessel Detector" loading="lazy">
-                </div>
-                <div class="card-content">
-                    <h3>Faster R-CNN Vessel Detector</h3>
-                    <span class="pipeline-badge">Object Detection</span>
-                    <p class="card-description">Faster R-CNN model for detecting and classifying vessels in satellite imagery. 91% precision on test dataset.</p>
-                    <p class="card-org">Organization: NMFS-OSI</p>
-                    <a href="gallery/cards/faster_rcnn_vessel_detection.html" class="card-link">View Full Card →</a>
-                </div>
-            </div>
-            </div>
-        </section>
-        
-        <section class="pipeline-section" data-pipeline="other">
-            <h2>Other</h2>
-            <div class="card-grid">
-                <div class="model-card" data-model-id="lstm_fisheries_forecast" data-pipeline="other" data-searchable="LSTM Fisheries Catch Forecaster LSTM neural network for forecasting seasonal fisheries catch based on historical data and environmental parameters. RMSE: 12.3%. NMFS-OSI">
-                <div class="card-thumbnail">
-                    <div style="display: flex; flex-direction: column; justify-content: center; text-align: center; height: 100%;"><strong>LSTM Fisheries Catch Forecaster</strong><small style="color: #7f8c8d;">NMFS-OSI</small></div>
-                </div>
-                <div class="card-content">
-                    <h3>LSTM Fisheries Catch Forecaster</h3>
-                    <span class="pipeline-badge">Other</span>
-                    <p class="card-description">LSTM neural network for forecasting seasonal fisheries catch based on historical data and environmental parameters. RMSE: 12.3%.</p>
-                    <p class="card-org">Organization: NMFS-OSI</p>
-                    <a href="gallery/cards/lstm_fisheries_forecast.html" class="card-link">View Full Card →</a>
-                </div>
-            </div>
-            </div>
-        </section>
-        
-        <section class="pipeline-section" data-pipeline="segmentation">
-            <h2>Segmentation</h2>
-            <div class="card-grid">
-                <div class="model-card" data-model-id="vit_ocean_segmentation" data-pipeline="segmentation" data-searchable="Vision Transformer Ocean Segmentation Vision Transformer model for semantic segmentation of ocean features from satellite imagery. Achieves 87% mIoU. NOAA-AI">
-                <div class="card-thumbnail">
-                    <div style="display: flex; flex-direction: column; justify-content: center; text-align: center; height: 100%;"><strong>Vision Transformer Ocean Segmentation</strong><small style="color: #7f8c8d;">NOAA-AI</small></div>
-                </div>
-                <div class="card-content">
-                    <h3>Vision Transformer Ocean Segmentation</h3>
-                    <span class="pipeline-badge">Segmentation</span>
-                    <p class="card-description">Vision Transformer model for semantic segmentation of ocean features from satellite imagery. Achieves 87% mIoU.</p>
-                    <p class="card-org">Organization: NOAA-AI</p>
-                    <a href="gallery/cards/vit_ocean_segmentation.html" class="card-link">View Full Card →</a>
+                    <p class="card-description">This YOLO11m-based model is designed for detecting sea urchins in underwater environments. It is optimized for real-time and post-processed video analysis, trained on diverse open-source datasets.</p>
+                    <p class="card-org">Organization: akridge</p>
+                    <a href="gallery/cards/akridge/yolo11m-sea-urchin-detector.html" class="card-link">View Full Card →</a>
                 </div>
             </div>
             </div>

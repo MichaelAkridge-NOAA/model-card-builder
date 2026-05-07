@@ -24,8 +24,12 @@ Thumbs.db
 # Generated model card artifacts
 Model_Card.html
 model_data.json
+/site/
+/docs/gallery/
 /.agents
 /__pycache__
+**/__pycache__/
+*.pyc
 skills-lock.json
 /tests/__pycache__
 CONTEXT.md

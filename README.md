@@ -1,85 +1,89 @@
-# NOAA Model Card Template
-A Python-based model card builder that fetches Hugging Face metadata into a typed **Model Card Data** contract, builds a format-neutral **Card Document**, and renders an HTML model card using named templates and themes.
+# NOAA Model Card Builder
+
+Model Card Builder is an AI automation pipeline that converts a Hugging Face model URL into a typed model-data card, generates a branded HTML model card, updates a searchable gallery, and publishes the result to GitHub Pages.
+## Operational Automation
+
+```mermaid
+flowchart LR
+    A[Trigger: workflow_dispatch or labeled issue] --> B[Extract Hugging Face URL]
+    B --> C[Fetch model data\npython/fetch_hf_model_card.py]
+    C --> D[AI enrichment\npython/summarize_model_card.py]
+    D --> E[Prompt input\nprompts/summarize.prompt.yaml]
+    D --> F[Recovery prompt\nprompts/recover_model_card_facets.prompt.yaml]
+    D --> G[Build HTML\npython/build.py]
+    G --> H[Archive card\ngallery/cards/<model_id>.html]
+    H --> I[Update registry\npython/update_gallery_registry.py]
+    I --> J[Generate gallery index\npython/generate_gallery.py]
+    J --> K[Publish to GitHub Pages]
+```
 
 ![Example Model Card](./assets/model_card_template_example.png)
 
-## Features
-- 📊 Clean, modern single-page HTML layout
-- 🎨 NOAA/NMFS branded design with official colors
-- 🧱 Typed model-card contract and section-based document builder
-- 🧩 Named template and theme interface for future renderers
-- 📱 Responsive column layout
-- 🔄 Automated GitHub Actions workflow
-- 📈 Support for data visualization
-- 🎯 Focus on key metrics and explanations
-- 🌐 Live gallery published via GitHub Pages
+## What It Does
 
-### Live Model Gallery
+- Fetches model metadata and README content from Hugging Face
+- Normalizes data into a typed Model Card Data contract
+- Optionally enriches missing narrative sections with GitHub Models using prompt files
+- Generates Model_Card.html with named template and theme architecture
+- Archives cards, updates gallery/cards.json, and rebuilds the gallery index
+- Publishes static site output through GitHub Pages automation
 
-View all generated model cards in the **[Live Gallery](https://MichaelAkridge-NOAA.github.io/model-card-template/gallery/)**
+### Stage Notes
 
-The gallery:
-- Updates automatically whenever a new model card is generated
-- Provides searchable, filterable index of all models
-- Displays model cards with metadata and metrics
-- Works instantly with client-side search (no server required)
+- Trigger policy: manual workflow_dispatch always runs; issue-triggered flow runs only when the generate-model-card label is applied to an issue containing a Hugging Face URL.
+- AI step: summarization and recovery are designed to be fault-tolerant in workflow execution so generation can continue if enrichment fails.
+- Output artifacts: Model_Card.html, model_data.json, and build logs are uploaded as workflow artifacts; gallery content is regenerated and deployed.
 
-**Gallery URL:** https://MichaelAkridge-NOAA.github.io/model-card-template/gallery/
+## Hugging Face Integration
 
-For GitHub Pages setup details, see [GITHUB_PAGES_SETUP.md](./GITHUB_PAGES_SETUP.md)
+The builder integrates with Hugging Face at multiple layers:
 
-### How to Use
+- API metadata fetch from huggingface.co/api/models/{repo_id}
+- README fetch from huggingface.co/{repo_id}/raw/main/README.md
+- URL-to-repo parsing for inputs like https://huggingface.co/org/model
+- Frontmatter and section extraction for overview, intended use, deployment, limitations, and training details
+- Metric extraction using pipeline-aware regex patterns (for example mAP, precision, recall, F1, accuracy)
+- Asset extraction from markdown images for representative visuals
+- Completeness assessment to identify missing facets before optional recovery
 
-1. **Install Requirements:**
-   ```powershell
-   pip install -r requirements.txt
-   ```
+This logic is implemented primarily in python/model_card_data.py and feeds downstream rendering and gallery publication steps.
 
-2. **Fetch model-card data:**
-   ```powershell
-   python fetch_hf_model_card.py https://huggingface.co/org/model
-   ```
-   This writes `model_data.json` in the typed **Model Card Data** shape, with README-first extraction for overview, intended use, deployment, limitations, metrics, and real model asset URLs when available.
+## Local Development
 
-3. **Render the model card:**
-   ```
-   python build.py --data model_data.json
-   ```
-   This writes `Model_Card.html` in the repository root.
+For local setup and command-line usage, see [LOCAL_QUICKSTART.md](./LOCAL_QUICKSTART.md).
 
-4. **Optional summary enrichment with GitHub Models:**
-   ```powershell
-   $env:GITHUB_TOKEN = "<token with models access>"
-   python summarize_model_card.py --url https://huggingface.co/org/model --data model_data.json --prompt summarize.prompt.yaml --recovery-prompt recover_model_card_facets.prompt.yaml
-   ```
-   This augments `model_data.json` with a generated summary, then optionally runs a targeted recovery pass for missing metrics or representative visuals when the completeness assessor finds gaps.
+## Automation and Publishing
 
-5. **One-step flow from a Hugging Face URL:**
-   ```powershell
-   python build.py --url https://huggingface.co/org/model --template standard --theme noaa
-   ```
+Workflow file: .github/workflows/model-card-builder.yml
 
-6. **GitHub Actions trigger policy:**
-   - `workflow_dispatch` can always be used manually.
-   - Issue-driven generation only runs when a maintainer applies the `generate-model-card` label to an issue that contains a Hugging Face URL.
+- Fetches and normalizes model data
+- Runs optional AI summarization and targeted recovery using prompt contracts
+- Builds HTML output
+- Archives card to gallery/cards/
+- Updates gallery/cards.json registry with model metadata
+- Regenerates gallery/index.html
+- Prepares site/ and deploys to GitHub Pages
 
-### Template Features
-- Clean, one-page layout
-- NOAA/NMFS branded design
-- Format-neutral **Card Document** built from structured sections and blocks
-- README-first model card extraction with frontmatter parsing and richer metric capture
-- Optional GitHub Models summarization step driven by `summarize.prompt.yaml`
-- HTML renderer adapter with room for future adapters such as PDF
-- All key model card sections
-- Easy to edit and extend
+Live gallery:
 
----
+- https://MichaelAkridge-NOAA.github.io/model-card-template/gallery/
+
+## Architecture Notes
+
+- Template: named arrangement of sections and blocks in the Card Document
+- Theme: named visual treatment applied by the renderer
+
+Model Card Builder uses these internal extension points while presenting a single automated pipeline at the product level.
+
+## References
 
 - https://github.com/tensorflow/model-card-toolkit
 - https://modelcards.withgoogle.com/
-----------
+
 #### Disclaimer
-This repository is a scientific product and is not official communication of the National Oceanic and Atmospheric Administration, or the United States Department of Commerce. All NOAA GitHub project content is provided on an ‘as is’ basis and the user assumes responsibility for its use. Any claims against the Department of Commerce or Department of Commerce bureaus stemming from the use of this GitHub project will be governed by all applicable Federal law. Any reference to specific commercial products, processes, or services by service mark, trademark, manufacturer, or otherwise, does not constitute or imply their endorsement, recommendation or favoring by the Department of Commerce. The Department of Commerce seal and logo, or the seal and logo of a DOC bureau, shall not be used in any manner to imply endorsement of any commercial product or activity by DOC or the United States Government.
+
+This repository is a scientific product and is not official communication of the National Oceanic and Atmospheric Administration, or the United States Department of Commerce. All NOAA GitHub project content is provided on an as is basis and the user assumes responsibility for its use. Any claims against the Department of Commerce or Department of Commerce bureaus stemming from the use of this GitHub project will be governed by all applicable Federal law. Any reference to specific commercial products, processes, or services by service mark, trademark, manufacturer, or otherwise, does not constitute or imply their endorsement, recommendation or favoring by the Department of Commerce. The Department of Commerce seal and logo, or the seal and logo of a DOC bureau, shall not be used in any manner to imply endorsement of any commercial product or activity by DOC or the United States Government.
 
 #### License
-- Details in the [LICENSE.md](./LICENSE.md) file.
+
+- Details in [LICENSE.md](./LICENSE.md).

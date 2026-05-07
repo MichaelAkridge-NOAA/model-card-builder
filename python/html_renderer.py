@@ -8,7 +8,7 @@ from typing import Optional
 
 import markdown
 
-from model_card_document import (
+from python.model_card_document import (
     BulletListBlock,
     CardDocument,
     CardSection,
