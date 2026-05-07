@@ -442,6 +442,7 @@ def _generate_gallery_html_content(cards: List[Dict], grouped: Dict[str, List[Di
             font-size: 1.2rem;
             color: #005cb9;
             word-break: break-word;
+            text-transform: uppercase;
         }}
 
         .pipeline-badge {{

@@ -131,7 +131,7 @@ class FooterInfo:
 
 @dataclass(frozen=True)
 class AssetPaths:
-    logo: Optional[str] = "assets\\NOAA_FISHERIES_logoH_web.png"
+    logo: Optional[str] = "assets/NOAA_FISHERIES_logoH_web.png"
     detection_example: Optional[str] = None
     pr_curve: Optional[str] = None
 

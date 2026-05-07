@@ -316,10 +316,15 @@ def _asset_url(path: Optional[str], output_path: Optional[str]) -> Optional[str]
 def _inline_local_asset(path: str, output_path: Optional[str]) -> Optional[str]:
     asset_path = path
     if not os.path.isabs(asset_path):
-        base_dir = os.getcwd()
-        if output_path:
-            base_dir = os.path.dirname(os.path.abspath(output_path))
-        asset_path = os.path.join(base_dir, asset_path)
+        # Prefer resolving relative to CWD (project root) so assets committed
+        # alongside the repository are found regardless of the output location.
+        cwd_candidate = os.path.join(os.getcwd(), asset_path)
+        if os.path.exists(cwd_candidate):
+            asset_path = cwd_candidate
+        elif output_path:
+            asset_path = os.path.join(os.path.dirname(os.path.abspath(output_path)), asset_path)
+        else:
+            asset_path = cwd_candidate
 
     if not os.path.exists(asset_path):
         return None
