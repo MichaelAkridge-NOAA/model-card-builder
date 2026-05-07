@@ -23,6 +23,8 @@ concurrency:
 jobs:
   build_model_card:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (
@@ -36,7 +38,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
           cache: 'pip'
@@ -136,13 +138,17 @@ jobs:
           if len(description) < 200 and model_data.get("overview"):
               description = model_data.get("overview", "")[:200]
           
-          # Output for next steps
-          print(f"::set-output name=model_id::{model_id}")
-          print(f"::set-output name=model_name::{model_name}")
-          print(f"::set-output name=model_url::{model_url}")
-          print(f"::set-output name=pipeline_type::{pipeline_type}")
-          print(f"::set-output name=organization::{organization}")
-          print(f"::set-output name=description::{description}")
+          # Output for next steps using GITHUB_OUTPUT (replaces deprecated set-output)
+          import os
+          github_output = os.environ.get('GITHUB_OUTPUT', '')
+          if github_output:
+              with open(github_output, 'a') as fh:
+                  fh.write(f"model_id={model_id}\n")
+                  fh.write(f"model_name={model_name}\n")
+                  fh.write(f"model_url={model_url}\n")
+                  fh.write(f"pipeline_type={pipeline_type}\n")
+                  fh.write(f"organization={organization}\n")
+                  fh.write(f"description={description}\n")
           EOF
 
       - name: Archive model card in gallery
