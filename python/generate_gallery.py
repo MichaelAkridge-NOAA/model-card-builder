@@ -404,7 +404,7 @@ def _generate_gallery_html_content(cards: List[Dict], grouped: Dict[str, List[Di
             cursor: pointer;
         }}
 
-        .model-card:hover {{
+        .model-card:hover, .model-card:focus-within {{
             transform: translateY(-4px);
             box-shadow: 0 12px 28px rgba(0, 56, 101, 0.12);
             border-color: #005cb9;
@@ -584,7 +584,7 @@ def _generate_gallery_html_content(cards: List[Dict], grouped: Dict[str, List[Di
                     <img src="assets/optics_si_logo_v1.png" alt="Optics SI" class="logo">
                     <div class="header-text">
                         <h1>Model Gallery</h1>
-                        <p>NOAA Model Card Registry</p>
+                        <p>NOAA Model Card Registry <span id="results-count" style="font-weight: bold; margin-left: 8px; color: #005cb9; opacity: 0.8;"></span></p>
                     </div>
                 </div>
                 <div class="controls">
@@ -649,6 +649,12 @@ def _generate_gallery_html_content(cards: List[Dict], grouped: Dict[str, List[Di
                     }}
                 }});
 
+                // Update results count
+                const resultsCount = document.getElementById('results-count');
+                if (resultsCount) {{
+                    resultsCount.textContent = `(${{totalVisibleCards}} model${{totalVisibleCards !== 1 ? 's' : ''}})`;
+                }}
+
                 // Show "no results" message if needed
                 if (totalVisibleCards === 0 && (query !== '' || selectedPipeline !== '')) {{
                     showNoResults();
@@ -676,6 +682,14 @@ def _generate_gallery_html_content(cards: List[Dict], grouped: Dict[str, List[Di
             searchInput.addEventListener('keyup', filterCards);
             searchInput.addEventListener('change', filterCards);
             pipelineFilter.addEventListener('change', filterCards);
+
+            // '/' shortcut to focus search
+            window.addEventListener('keydown', (e) => {{
+                if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {{
+                    e.preventDefault();
+                    searchInput.focus();
+                }}
+            }});
 
             // Initial render
             filterCards();
@@ -725,7 +739,7 @@ def _generate_card_html(card: Dict) -> str:
                     <span class="pipeline-badge">{_format_pipeline_name(pipeline_type)}</span>
                     <p class="card-description">{description}</p>
                     <p class="card-org">Organization: {organization}</p>
-                    <a href="{escape_html(card_url)}" class="card-link">View Full Card →</a>
+                    <a href="{escape_html(card_url)}" class="card-link" aria-label="View full card for {model_name}">View Full Card <span aria-hidden="true">→</span></a>
                 </div>
             </div>'''
 

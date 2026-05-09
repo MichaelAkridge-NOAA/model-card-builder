@@ -134,7 +134,7 @@
             cursor: pointer;
         }
 
-        .model-card:hover {
+        .model-card:hover, .model-card:focus-within {
             transform: translateY(-4px);
             box-shadow: 0 12px 28px rgba(0, 56, 101, 0.12);
             border-color: #005cb9;
@@ -314,7 +314,7 @@
                     <img src="assets/optics_si_logo_v1.png" alt="Optics SI" class="logo">
                     <div class="header-text">
                         <h1>Model Gallery</h1>
-                        <p>NOAA Model Card Registry</p>
+                        <p>NOAA Model Card Registry <span id="results-count" style="font-weight: bold; margin-left: 8px; color: #005cb9; opacity: 0.8;"></span></p>
                     </div>
                 </div>
                 <div class="controls">
@@ -342,7 +342,7 @@
                     <span class="pipeline-badge">Image Classification</span>
                     <p class="card-description">A YOLO11m image classification model trained to classify **broad benthic cover categories (Tier-1)** in underwater reef imagery from NOAA Pacific Islands surveys. The model achieves **71.0% top-1 accu</p>
                     <p class="card-org">Organization: NMFS-OSI</p>
-                    <a href="cards/NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t1.html" class="card-link">View Full Card →</a>
+                    <a href="cards/NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t1.html" class="card-link" aria-label="View full card for Nmfs Osi/Yolo11M Cls Noaa Pacific Benthic Cover T1">View Full Card <span aria-hidden="true">→</span></a>
                 </div>
             </div>
             </div>
@@ -360,7 +360,7 @@
                     <span class="pipeline-badge">Object Detection</span>
                     <p class="card-description">This model was trained to identify and locate **Isopora crateriformis (ICRA)** using the ultralytics YOLO11 architecture in various underwater conditions. - **Model Architecture**: YOLO11m - **Task**:</p>
                     <p class="card-org">Organization: NMFS-OSI</p>
-                    <a href="cards/NMFS-OSI/yolo11m-esa-coral-icra-detector.html" class="card-link">View Full Card →</a>
+                    <a href="cards/NMFS-OSI/yolo11m-esa-coral-icra-detector.html" class="card-link" aria-label="View full card for Nmfs Osi/Yolo11M Esa Coral Icra Detector">View Full Card <span aria-hidden="true">→</span></a>
                 </div>
             </div>
             </div>
@@ -416,6 +416,12 @@
                     }
                 });
 
+                // Update results count
+                const resultsCount = document.getElementById('results-count');
+                if (resultsCount) {
+                    resultsCount.textContent = `(${totalVisibleCards} model${totalVisibleCards !== 1 ? 's' : ''})`;
+                }
+
                 // Show "no results" message if needed
                 if (totalVisibleCards === 0 && (query !== '' || selectedPipeline !== '')) {
                     showNoResults();
@@ -443,6 +449,14 @@
             searchInput.addEventListener('keyup', filterCards);
             searchInput.addEventListener('change', filterCards);
             pipelineFilter.addEventListener('change', filterCards);
+
+            // '/' shortcut to focus search
+            window.addEventListener('keydown', (e) => {
+                if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
 
             // Initial render
             filterCards();
