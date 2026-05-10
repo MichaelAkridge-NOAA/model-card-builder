@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+  <style>{{ theme_css }}</style>
+</head>
+<body class="theme-{{ theme }}">
+  <main class="page template-branded">
+    <header class="masthead">
+      {{ logo_html }}
+      <h1 class="title">{{ title }}</h1>
+      <p class="subtitle">{{ subtitle }}</p>
+    </header>
+    <div class="section-grid">
+      {{ overview_section }}
+      {{ performance_section }}
+      <div class="section-row-bottom">
+        {{ technical_section }}
+        {{ usage_section }}
+      </div>
+    </div>
+    <footer class="footer">{{ footer }}</footer>
+  </main>
+</body>
+</html>

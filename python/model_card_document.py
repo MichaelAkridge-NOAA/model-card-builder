@@ -6,8 +6,8 @@ from typing import Optional, Union
 from python.model_card_data import Metric, ModelCardData, infer_pipeline_tag
 
 
-SUPPORTED_TEMPLATES = {"standard"}
-SUPPORTED_THEMES = {"noaa"}
+SUPPORTED_TEMPLATES = {"standard", "branded"}
+SUPPORTED_THEMES = {"noaa", "branded"}
 
 
 @dataclass(frozen=True)
@@ -71,6 +71,103 @@ def build_card_document(
         raise ValueError(f"Unsupported theme '{theme}'.")
 
     pipeline_tag = infer_pipeline_tag(model_card_data)
+
+    if template == "branded":
+        return _build_branded_document(model_card_data, theme)
+
+    return _build_standard_document(model_card_data, template, theme, pipeline_tag)
+
+
+def _build_branded_document(model_card_data: ModelCardData, theme: str) -> CardDocument:
+    pipeline_tag = infer_pipeline_tag(model_card_data)
+
+    # 1. Model Overview Section (Top Left + Top Right Image)
+    overview_blocks = [
+        KeyValueListBlock(
+            title="",
+            items=[
+                ("Task", pipeline_tag.replace("-", " ").title()),
+                ("Model Class", model_card_data.model_details.architecture),
+                ("Use", model_card_data.intended_use or "N/A"),
+            ],
+        ),
+        TextBlock(text=model_card_data.overview or "No overview available."),
+    ]
+    primary_image_caption, primary_image_alt = _primary_visual_labels(pipeline_tag)
+    primary_image = _optional_image(
+        model_card_data.assets.detection_example,
+        primary_image_alt,
+        primary_image_caption,
+    )
+    if primary_image:
+        overview_blocks.append(primary_image)
+
+    # 2. Model Performance Section (Metric cards)
+    performance_blocks = []
+    if model_card_data.metrics:
+        performance_blocks.append(MetricTableBlock(metrics=model_card_data.metrics))
+
+    # 3. Technical Details Section
+    technical_blocks = [
+        KeyValueListBlock(
+            title="",
+            items=[
+                ("Architecture", model_card_data.model_details.architecture),
+                ("Data Details", model_card_data.model_details.training_data),
+                ("Training", model_card_data.training_details or "N/A"),
+                ("Limitations", model_card_data.limitations or "N/A"),
+            ],
+        )
+    ]
+
+    # 4. How to Use Section
+    usage_blocks = []
+    if model_card_data.deployment:
+        usage_blocks.append(TextBlock(text=model_card_data.deployment, format="markdown"))
+
+    if _supports_confidence_thresholds(pipeline_tag):
+        usage_blocks.append(
+            BulletListBlock(
+                title="",
+                items=[
+                    f"{threshold.threshold}: {threshold.description}"
+                    for threshold in model_card_data.confidence_thresholds
+                ],
+            )
+        )
+
+    sections = [
+        CardSection(title="Model Overview", blocks=overview_blocks),
+        CardSection(title="Model Performance (Key Numbers)", blocks=performance_blocks),
+        CardSection(title="Technical Details", blocks=technical_blocks),
+        CardSection(title="How to Use?", blocks=usage_blocks),
+    ]
+
+    subtitle = (
+        f"{model_card_data.model_details.version} | Released {model_card_data.model_details.release_date}"
+    )
+    footer = (
+        f"{model_card_data.footer_info.organization} | "
+        f"Contact: {model_card_data.footer_info.contact_email}"
+    )
+
+    return CardDocument(
+        title=model_card_data.model_name,
+        subtitle=subtitle,
+        template="branded",
+        theme=theme,
+        logo_path=model_card_data.assets.logo,
+        sections=sections,
+        footer=footer,
+    )
+
+
+def _build_standard_document(
+    model_card_data: ModelCardData,
+    template: str,
+    theme: str,
+    pipeline_tag: str,
+) -> CardDocument:
     summary_blocks = []
     if model_card_data.generated_summary:
         summary_blocks.append(TextBlock(text=model_card_data.generated_summary, format="markdown"))
