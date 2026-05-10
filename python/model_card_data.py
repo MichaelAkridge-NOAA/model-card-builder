@@ -107,6 +107,23 @@ PIPELINE_IMAGE_HINTS = {
 
 SUMMARY_QUALITY_METADATA_PREFIXES = ("language:", "base_model:", "tags:", "pipeline_tag:", "library_name:")
 
+# Pre-compiled regex patterns for performance
+WHITESPACE_RE = re.compile(r"\s+")
+NON_ALPHANUM_RE = re.compile(r"[^a-z0-9]+")
+FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n?", re.DOTALL)
+MARKDOWN_TITLE_RE = re.compile(r"^#\s+(.+)$", re.MULTILINE)
+MARKDOWN_MARKER_RE = re.compile(r"[*`_]")
+MARKDOWN_HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$", re.MULTILINE)
+MARKDOWN_IMAGE_RE = re.compile(r"!\[(.*?)\]\((.*?)\)")
+MARKDOWN_IMAGE_LINK_RE = re.compile(r"!\[[^\]]*\]\([^)]+\)")
+HTML_IMAGE_SRC_RE = re.compile(r"<img[^>]*src=[\"']([^\"']+)[\"'][^>]*>")
+HTML_IMAGE_TAG_RE = re.compile(r"<img[^>]*>")
+IMAGE_SIZE_RE = re.compile(
+    r"[*_`]*Image Size[*_`]*\s*:\s*([0-9]+\s*(?:x|×)\s*[0-9]+|[0-9]+)",
+    re.IGNORECASE,
+)
+NUMERIC_VALUE_RE = re.compile(r"([0-9]+(?:\.[0-9]+)?)")
+
 
 @dataclass(frozen=True)
 class Metric:
@@ -471,14 +488,14 @@ def _parse_readme_context(repo_id: str, readme_content: Optional[str]) -> Readme
     frontmatter: dict[str, Any] = {}
     body = content
 
-    frontmatter_match = re.match(r"^---\n(.*?)\n---\n?", content, re.DOTALL)
+    frontmatter_match = FRONTMATTER_RE.match(content)
     if frontmatter_match:
         parsed_frontmatter = yaml.safe_load(frontmatter_match.group(1)) or {}
         if isinstance(parsed_frontmatter, dict):
             frontmatter = parsed_frontmatter
         body = content[frontmatter_match.end() :].strip()
 
-    title_match = re.search(r"^#\s+(.+)$", body, re.MULTILINE)
+    title_match = MARKDOWN_TITLE_RE.search(body)
     title = title_match.group(1).strip() if title_match else ""
 
     return ReadmeContext(
@@ -491,8 +508,7 @@ def _parse_readme_context(repo_id: str, readme_content: Optional[str]) -> Readme
 
 
 def _extract_markdown_sections(body: str) -> dict[str, str]:
-    heading_pattern = re.compile(r"^(#{1,6})\s+(.+?)\s*$", re.MULTILINE)
-    matches = list(heading_pattern.finditer(body))
+    matches = list(MARKDOWN_HEADING_RE.finditer(body))
     if not matches:
         return {}
 
@@ -514,9 +530,9 @@ def _extract_markdown_sections(body: str) -> dict[str, str]:
 
 def _extract_readme_images(body: str, repo_id: str) -> list[ReadmeImage]:
     images: list[ReadmeImage] = []
-    for alt_text, path in re.findall(r"!\[(.*?)\]\((.*?)\)", body):
+    for alt_text, path in MARKDOWN_IMAGE_RE.findall(body):
         images.append(ReadmeImage(alt_text=alt_text.strip(), url=_resolve_hf_asset_url(repo_id, path)))
-    for path in re.findall(r"<img[^>]*src=[\"']([^\"']+)[\"'][^>]*>", body):
+    for path in HTML_IMAGE_SRC_RE.findall(body):
         images.append(ReadmeImage(alt_text="README image", url=_resolve_hf_asset_url(repo_id, path)))
     return images
 
@@ -644,9 +660,9 @@ def _extract_input_size(readme_context: ReadmeContext, api_data: Mapping[str, An
     if config_image_size:
         return str(config_image_size)
 
-    match = re.search(r"[*_`]*Image Size[*_`]*\s*:\s*([0-9]+\s*(?:x|×)\s*[0-9]+|[0-9]+)", readme_context.body, re.IGNORECASE)
+    match = IMAGE_SIZE_RE.search(readme_context.body)
     if match:
-        return re.sub(r"\s+", "", match.group(1)).replace("×", "x")
+        return WHITESPACE_RE.sub("", match.group(1)).replace("×", "x")
     return "N/A"
 
 
@@ -844,7 +860,7 @@ def _assess_overview_quality(overview: str) -> str:
 
 
 def _clean_table_cell(value: str) -> str:
-    return re.sub(r"[*`_]", "", value).strip()
+    return MARKDOWN_MARKER_RE.sub("", value).strip()
 
 
 def _normalize_metric_name(value: str) -> str:
@@ -874,19 +890,20 @@ def _metric_meaning(name: str, pipeline_tag: str) -> str:
 
 
 def _parse_numeric_value(value: str) -> Optional[float]:
-    match = re.search(r"([0-9]+(?:\.[0-9]+)?)", str(value))
+    match = NUMERIC_VALUE_RE.search(str(value))
     if not match:
         return None
     return float(match.group(1))
 
 
 def _normalize_heading(value: str) -> str:
-    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9]+", " ", value.lower())).strip()
+    # Use " ".join(val.split()) for faster whitespace normalization
+    return " ".join(NON_ALPHANUM_RE.sub(" ", value.lower()).split())
 
 
 def _strip_media(text: str) -> str:
-    without_images = re.sub(r"!\[[^\]]*\]\([^)]+\)", "", text)
-    without_html_images = re.sub(r"<img[^>]*>", "", without_images)
+    without_images = MARKDOWN_IMAGE_LINK_RE.sub("", text)
+    without_html_images = HTML_IMAGE_TAG_RE.sub("", without_images)
     return without_html_images.strip()
 
 
@@ -938,7 +955,7 @@ def _extract_labeled_value(text: str, label: str) -> str:
     match = re.search(pattern, text, re.IGNORECASE)
     if not match:
         return ""
-    return re.sub(r"[*`_]", "", match.group(1)).strip()
+    return MARKDOWN_MARKER_RE.sub("", match.group(1)).strip()
 
 
 def _value_as_text(value: Any) -> str:
