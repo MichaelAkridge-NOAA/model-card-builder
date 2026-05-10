@@ -1,0 +1,60 @@
+{
+  "model_name": "Fish Detector",
+  "model_details": {
+    "version": "v1.5",
+    "release_date": "2025-05-08",
+    "architecture": "Yolo11n",
+    "input_size": "640x640",
+    "training_data": "1.5k image dataset"
+  },
+  "overview": "This model detects fish in grayscale underwater footage.",
+  "intended_use": "Real-time Detection of Fish",
+  "limitations": "Verify detections before use in critical applications.",
+  "deployment": "Use higher confidence setting to reduce false positives.",
+  "training_details": "80/20 Split",
+  "generated_summary": "YOLO-based fish detection model.",
+  "metrics": [
+    {
+      "name": "Precision",
+      "value": 0.885,
+      "meaning": "Proportion of correct positive predictions"
+    },
+    {
+      "name": "Recall",
+      "value": 0.861,
+      "meaning": "Proportion of actual positives identified"
+    },
+    {
+      "name": "mAP",
+      "value": 0.937,
+      "meaning": "Mean Average Precision"
+    }
+  ],
+  "confidence_thresholds": [
+    {
+      "threshold": "High (0.8)",
+      "description": "Low false positives, but might miss some fish"
+    },
+    {
+      "threshold": "Medium (0.5)",
+      "description": "Use for general review and monitoring/human in loop."
+    },
+    {
+      "threshold": "Low (0.25)",
+      "description": "Shows almost everything the model thinks might be a fish"
+    }
+  ],
+  "footer_info": {
+    "organization": "NOAA/NMFS/PIFSC",
+    "contact_email": "Michael.Akridge@noaa.gov",
+    "version": "1.5",
+    "year": "2025"
+  },
+  "metadata": {
+    "Task": "Object Detection"
+  },
+  "assets": {
+    "logo": "assets/NOAA_FISHERIES_logoH_web.png",
+    "detection_example": "assets/model_card_template_example.png"
+  }
+}
