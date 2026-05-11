@@ -107,6 +107,16 @@ PIPELINE_IMAGE_HINTS = {
 
 SUMMARY_QUALITY_METADATA_PREFIXES = ("language:", "base_model:", "tags:", "pipeline_tag:", "library_name:")
 
+# Pre-compiled regex patterns for better performance
+HEADING_PATTERN = re.compile(r"^(#{1,6})\s+(.+?)\s*$", re.MULTILINE)
+MD_IMAGE_PATTERN = re.compile(r"!\[(.*?)\]\((.*?)\)")
+HTML_IMAGE_PATTERN = re.compile(r"<img[^>]*src=[\"']([^\"']+)[\"'][^>]*>")
+INPUT_SIZE_PATTERN = re.compile(r"[*_`]*Image Size[*_`]*\s*:\s*([0-9]+\s*(?:x|×)\s*[0-9]+|[0-9]+)", re.IGNORECASE)
+NON_ALPHANUM_PATTERN = re.compile(r"[^a-z0-9]+")
+WHITESPACE_PATTERN = re.compile(r"\s+")
+MD_STRIP_PATTERN = re.compile(r"!\[[^\]]*\]\([^)]+\)")
+HTML_STRIP_PATTERN = re.compile(r"<img[^>]*>")
+
 
 @dataclass(frozen=True)
 class Metric:
@@ -205,7 +215,11 @@ def parse_metrics(text: Optional[str], pipeline_tag: str = "default") -> list[Me
         if normalized_pipeline not in allowed_pipelines and "default" not in allowed_pipelines:
             continue
 
-        value = _extract_metric_value(text, definition["patterns"])
+        # Pre-compile patterns if not already done
+        if "compiled_patterns" not in definition:
+            definition["compiled_patterns"] = [re.compile(p) for p in definition["patterns"]]
+
+        value = _extract_metric_value(text, definition["compiled_patterns"])
         if value is not None:
             metrics[name] = Metric(name=name, value=value, meaning=definition["meaning"])
 
@@ -491,8 +505,7 @@ def _parse_readme_context(repo_id: str, readme_content: Optional[str]) -> Readme
 
 
 def _extract_markdown_sections(body: str) -> dict[str, str]:
-    heading_pattern = re.compile(r"^(#{1,6})\s+(.+?)\s*$", re.MULTILINE)
-    matches = list(heading_pattern.finditer(body))
+    matches = list(HEADING_PATTERN.finditer(body))
     if not matches:
         return {}
 
@@ -514,9 +527,9 @@ def _extract_markdown_sections(body: str) -> dict[str, str]:
 
 def _extract_readme_images(body: str, repo_id: str) -> list[ReadmeImage]:
     images: list[ReadmeImage] = []
-    for alt_text, path in re.findall(r"!\[(.*?)\]\((.*?)\)", body):
+    for alt_text, path in MD_IMAGE_PATTERN.findall(body):
         images.append(ReadmeImage(alt_text=alt_text.strip(), url=_resolve_hf_asset_url(repo_id, path)))
-    for path in re.findall(r"<img[^>]*src=[\"']([^\"']+)[\"'][^>]*>", body):
+    for path in HTML_IMAGE_PATTERN.findall(body):
         images.append(ReadmeImage(alt_text="README image", url=_resolve_hf_asset_url(repo_id, path)))
     return images
 
@@ -644,9 +657,9 @@ def _extract_input_size(readme_context: ReadmeContext, api_data: Mapping[str, An
     if config_image_size:
         return str(config_image_size)
 
-    match = re.search(r"[*_`]*Image Size[*_`]*\s*:\s*([0-9]+\s*(?:x|×)\s*[0-9]+|[0-9]+)", readme_context.body, re.IGNORECASE)
+    match = INPUT_SIZE_PATTERN.search(readme_context.body)
     if match:
-        return re.sub(r"\s+", "", match.group(1)).replace("×", "x")
+        return WHITESPACE_PATTERN.sub("", match.group(1)).replace("×", "x")
     return "N/A"
 
 
@@ -777,9 +790,9 @@ def _with_assessment(model_card_data: ModelCardData) -> ModelCardData:
     return replace(model_card_data, assessment=assess_model_card_data(model_card_data))
 
 
-def _extract_metric_value(text: str, patterns: list[str]) -> Optional[float]:
+def _extract_metric_value(text: str, patterns: list[re.Pattern]) -> Optional[float]:
     for pattern in patterns:
-        match = re.search(pattern, text)
+        match = pattern.search(text)
         if not match:
             continue
         for group in match.groups():
@@ -881,12 +894,13 @@ def _parse_numeric_value(value: str) -> Optional[float]:
 
 
 def _normalize_heading(value: str) -> str:
-    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9]+", " ", value.lower())).strip()
+    # Use pre-compiled NON_ALPHANUM_PATTERN and split/join for efficient whitespace normalization
+    return " ".join(NON_ALPHANUM_PATTERN.sub(" ", value.lower()).split())
 
 
 def _strip_media(text: str) -> str:
-    without_images = re.sub(r"!\[[^\]]*\]\([^)]+\)", "", text)
-    without_html_images = re.sub(r"<img[^>]*>", "", without_images)
+    without_images = MD_STRIP_PATTERN.sub("", text)
+    without_html_images = HTML_STRIP_PATTERN.sub("", without_images)
     return without_html_images.strip()
 
 
