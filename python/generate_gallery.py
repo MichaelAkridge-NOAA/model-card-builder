@@ -199,9 +199,28 @@ def _generate_empty_gallery_html() -> str:
             color: #7f8c8d;
             font-size: 0.9rem;
         }
+
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 0;
+            background: #005cb9;
+            color: white;
+            padding: 12px 24px;
+            z-index: 1000;
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom-right-radius: 8px;
+            transition: top 0.2s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <div class="page">
         <header>
             <img src="assets/optics_si_logo_v1.png" alt="Optics SI" class="logo">
@@ -209,7 +228,7 @@ def _generate_empty_gallery_html() -> str:
             <p class="subtitle">NOAA Model Card Registry</p>
         </header>
 
-        <main>
+        <main id="main-content">
             <div class="empty-message">
                 <p>📦 No model cards yet</p>
                 <p>The gallery will appear here as model cards are added to the registry.</p>
@@ -523,6 +542,32 @@ def _generate_gallery_html_content(cards: List[Dict], grouped: Dict[str, List[Di
             text-decoration: underline;
         }}
 
+        .skip-link {{
+            position: absolute;
+            top: -100px;
+            left: 0;
+            background: #005cb9;
+            color: white;
+            padding: 12px 24px;
+            z-index: 1000;
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom-right-radius: 8px;
+            transition: top 0.2s ease;
+        }}
+
+        .skip-link:focus {{
+            top: 0;
+        }}
+
+        .model-card:focus-within {{
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 56, 101, 0.12);
+            border-color: #005cb9;
+            outline: 2px solid #005cb9;
+            outline-offset: 2px;
+        }}
+
         @media (max-width: 768px) {{
             .card-grid {{
                 grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -577,6 +622,7 @@ def _generate_gallery_html_content(cards: List[Dict], grouped: Dict[str, List[Di
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <div class="page">
         <header>
             <div class="header-content">
@@ -597,7 +643,7 @@ def _generate_gallery_html_content(cards: List[Dict], grouped: Dict[str, List[Di
             </div>
         </header>
 
-        <main id="gallery">
+        <main id="main-content">
             {sections_html_str}
         </main>
 
@@ -613,7 +659,7 @@ def _generate_gallery_html_content(cards: List[Dict], grouped: Dict[str, List[Di
             const sections = document.querySelectorAll('.pipeline-section');
             const searchInput = document.getElementById('search');
             const pipelineFilter = document.getElementById('pipeline-filter');
-            const gallery = document.getElementById('gallery');
+            const gallery = document.getElementById('main-content');
 
             function filterCards() {{
                 const query = searchInput.value.toLowerCase().trim();
@@ -725,7 +771,7 @@ def _generate_card_html(card: Dict) -> str:
                     <span class="pipeline-badge">{_format_pipeline_name(pipeline_type)}</span>
                     <p class="card-description">{description}</p>
                     <p class="card-org">Organization: {organization}</p>
-                    <a href="{escape_html(card_url)}" class="card-link">View Full Card →</a>
+                    <a href="{escape_html(card_url)}" class="card-link" aria-label="View full card for {model_name}">View Full Card →</a>
                 </div>
             </div>'''
 
