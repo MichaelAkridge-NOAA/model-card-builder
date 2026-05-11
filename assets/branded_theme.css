@@ -1,0 +1,186 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #ffffff;
+  color: #333;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.masthead {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  display: block;
+  max-width: 280px;
+  margin: 0 auto 20px;
+}
+
+.title {
+  font-size: 2.5rem;
+  color: #4A90E2;
+  margin: 0;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin-top: 10px;
+}
+
+.template-badge {
+  display: none;
+}
+
+.section-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-section {
+  border-radius: 40px;
+  padding: 20px;
+  position: relative;
+}
+
+.card-section h2 {
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+/* Section Colors */
+.card-section:nth-of-type(1) { background-color: #D1E4F8; color: #15467A; }
+.card-section:nth-of-type(1) h2 { color: #2E78C7; }
+
+.card-section:nth-of-type(2) { background-color: #D5EBDD; color: #1E462E; }
+.card-section:nth-of-type(2) h2 { color: #2E78C7; }
+
+.card-section:nth-of-type(3) { background-color: #FDE085; color: #4B3A07; }
+.card-section:nth-of-type(3) h2 { color: #2E78C7; }
+
+.card-section:nth-of-type(4) { background-color: #ED8E83; color: #5B1C15; }
+.card-section:nth-of-type(4) h2 { color: #2E78C7; }
+
+/* Block Layouts */
+.card-section:nth-of-type(1) .section-body {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 20px;
+}
+
+.card-section:nth-of-type(3), .card-section:nth-of-type(4) {
+  width: 48%;
+}
+
+.section-row-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 4%;
+}
+
+/* Metric Cards */
+.card-section:nth-of-type(2) .metric-table {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px;
+  border-collapse: separate;
+}
+
+.card-section:nth-of-type(2) .metric-table thead { display: none; }
+.card-section:nth-of-type(2) .metric-table tbody {
+  display: contents;
+}
+
+.card-section:nth-of-type(2) .metric-table tr {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.card-section:nth-of-type(2) .metric-table td {
+  border: none;
+  text-align: center;
+  padding: 5px;
+}
+
+.card-section:nth-of-type(2) .metric-table td:nth-child(1) {
+  font-size: 1.25rem;
+  font-weight: 500;
+  order: 1;
+}
+
+.card-section:nth-of-type(2) .metric-table td:nth-child(2) {
+  font-size: 2.5rem;
+  color: #4A90E2;
+  font-weight: 600;
+  order: 2;
+}
+
+.card-section:nth-of-type(2) .metric-table td:nth-child(3) {
+  font-size: 0.85rem;
+  color: #666;
+  order: 3;
+}
+
+/* Key Value Lists in branded */
+.card-section .key-value-list {
+  background: white;
+  border-radius: 15px;
+  padding: 15px;
+  list-style: none;
+  border: 1px solid #ddd;
+}
+
+.card-section .key-value-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.card-section .key-value-list li:last-child { border-bottom: none; }
+
+/* Image styling */
+.image-block { margin-top: 0; }
+.image-block img {
+  border-radius: 30px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+.image-block figcaption {
+  text-align: center;
+  font-weight: 600;
+  margin-top: 10px;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.footer {
+  margin-top: 40px;
+  border-top: 2px solid #4A90E2;
+  padding-top: 20px;
+  color: #4A90E2;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .card-section:nth-of-type(1) .section-body { grid-template-columns: 1fr; }
+  .section-row-bottom { flex-direction: column; }
+  .card-section:nth-of-type(3), .card-section:nth-of-type(4) { width: 100%; }
+  .card-section:nth-of-type(2) .metric-table { flex-direction: column; }
+}

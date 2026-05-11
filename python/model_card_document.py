@@ -6,8 +6,8 @@ from typing import Optional, Union
 from python.model_card_data import Metric, ModelCardData, infer_pipeline_tag
 
 
-SUPPORTED_TEMPLATES = {"standard"}
-SUPPORTED_THEMES = {"noaa"}
+SUPPORTED_TEMPLATES = {"standard", "branded"}
+SUPPORTED_THEMES = {"noaa", "branded"}
 
 
 @dataclass(frozen=True)
