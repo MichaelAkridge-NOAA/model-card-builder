@@ -151,11 +151,23 @@ body {
 }
 """
 
+_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BRANDED_THEME_CSS_PATH = os.path.join(_BASE_DIR, "assets", "branded_theme.css")
+BRANDED_TEMPLATE_PATH = os.path.join(_BASE_DIR, "assets", "branded_template.html")
+
 
 def render_card_document(document: CardDocument, output_path: str) -> None:
     rendered = render_card_document_to_string(document, output_path)
     with open(output_path, "w", encoding="utf-8") as file:
         file.write(rendered)
+
+
+def _load_asset_file(path: str) -> str:
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return f.read()
+    except Exception:
+        return ""
 
 
 def render_card_document_to_string(
@@ -167,6 +179,16 @@ def render_card_document_to_string(
     if logo_path:
         logo_html = f'<img class="logo" src="{logo_path}" alt="Organization logo">'
 
+    if document.theme == "noaa":
+        theme_css = NOAA_THEME_CSS
+    elif document.theme == "branded":
+        theme_css = _load_asset_file(BRANDED_THEME_CSS_PATH)
+    else:
+        theme_css = ""
+
+    if document.template == "branded":
+        return _render_branded_template(document, logo_html, theme_css, output_path)
+
     sections_html = "\n".join(_render_section(section, output_path) for section in document.sections)
 
     return f"""<!DOCTYPE html>
@@ -175,7 +197,7 @@ def render_card_document_to_string(
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{html.escape(document.title)}</title>
-  <style>{NOAA_THEME_CSS}</style>
+  <style>{theme_css}</style>
 </head>
 <body class="theme-{html.escape(document.theme)}">
   <main class="page template-{html.escape(document.template)}">
@@ -192,6 +214,139 @@ def render_card_document_to_string(
   </main>
 </body>
 </html>
+"""
+
+
+def _render_branded_template(
+    document: CardDocument,
+    logo_html: str,
+    theme_css: str,
+    output_path: Optional[str],
+) -> str:
+    # Branded template expects exactly 4 sections in a specific order.
+    # We attempt to find the best matching sections by title.
+
+    used_indices = set()
+
+    def find_section(keywords):
+        for i, section in enumerate(document.sections):
+            if i in used_indices:
+                continue
+            if any(k.lower() in section.title.lower() for k in keywords):
+                used_indices.add(i)
+                return section
+        return None
+
+    # Pick sections based on keywords
+    s_overview = find_section(["summary", "overview"])
+    if s_overview is None and len(document.sections) > 0:
+        s_overview = document.sections[0]
+        used_indices.add(0)
+
+    s_performance = find_section(["performance", "metrics"])
+    s_technical = find_section(["technical", "training"])
+    s_usage = find_section(["usage", "how to use", "intended use"])
+
+    # Fallbacks if some sections are missing, using remaining unused sections
+    unused_sections = [s for i, s in enumerate(document.sections) if i not in used_indices]
+
+    if not s_performance:
+        if unused_sections:
+            s_performance = unused_sections.pop(0)
+        else:
+            s_performance = s_overview # Final fallback
+
+    if not s_technical:
+        if unused_sections:
+            s_technical = unused_sections.pop(0)
+        else:
+            s_technical = s_overview # Final fallback
+
+    if not s_usage:
+        if unused_sections:
+            s_usage = unused_sections.pop(0)
+        else:
+            s_usage = s_overview # Final fallback
+
+    overview_section = _render_branded_section(s_overview, output_path, "overview")
+    performance_section = _render_branded_section(s_performance, output_path, "performance")
+    technical_section = _render_branded_section(s_technical, output_path, "technical")
+    usage_section = _render_branded_section(s_usage, output_path, "usage")
+
+    template_html = _load_asset_file(BRANDED_TEMPLATE_PATH)
+    if not template_html:
+        # Fallback if template file is missing
+        return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{html.escape(document.title)}</title>
+  <style>{theme_css}</style>
+</head>
+<body class="theme-{html.escape(document.theme)}">
+  <main class="page template-branded">
+    <header class="masthead">
+      {logo_html}
+      <h1 class="title">{html.escape(document.title)}</h1>
+      <p class="subtitle">{html.escape(document.subtitle)}</p>
+    </header>
+    <div class="section-grid">
+      {overview_section}
+      {performance_section}
+      <div class="section-row-bottom">
+        {technical_section}
+        {usage_section}
+      </div>
+    </div>
+    <footer class="footer">{html.escape(document.footer)}</footer>
+  </main>
+</body>
+</html>
+"""
+
+    # Inject template variables
+    replacements = {
+        "{{ title }}": html.escape(document.title),
+        "{{ logo_html }}": logo_html,
+        "{{ subtitle }}": html.escape(document.subtitle),
+        "{{ theme_css }}": theme_css,
+        "{{ theme }}": html.escape(document.theme),
+        "{{ overview_section }}": overview_section,
+        "{{ performance_section }}": performance_section,
+        "{{ technical_section }}": technical_section,
+        "{{ usage_section }}": usage_section,
+        "{{ footer }}": html.escape(document.footer),
+    }
+
+    for placeholder, value in replacements.items():
+        template_html = template_html.replace(placeholder, value)
+
+    return template_html
+
+
+def _render_branded_section(section: Optional[CardSection], output_path: Optional[str], section_type: str) -> str:
+    if not section:
+        return f'<article class="card-section type-{section_type} empty"></article>'
+
+    # For "overview" section in branded template, we split blocks into left (metadata) and right (image)
+    if section_type == "overview":
+        left_blocks = "\n".join(_render_block(block, output_path) for block in section.blocks if not isinstance(block, ImageBlock))
+        right_blocks = "\n".join(_render_block(block, output_path) for block in section.blocks if isinstance(block, ImageBlock))
+        content = f"""
+        <div class="section-body">
+            <div class="column-left">{left_blocks}</div>
+            <div class="column-right">{right_blocks}</div>
+        </div>
+        """
+    else:
+        content = "\n".join(_render_block(block, output_path) for block in section.blocks)
+
+    return f"""
+<article class="card-section type-{section_type}">
+  <h2>{html.escape(section.title)}</h2>
+  {content}
+</article>
 """
 def _render_section(section: CardSection, output_path: Optional[str]) -> str:
     blocks = "\n".join(_render_block(block, output_path) for block in section.blocks)
