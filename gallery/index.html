@@ -253,6 +253,32 @@
             text-decoration: underline;
         }
 
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 0;
+            background: #005cb9;
+            color: white;
+            padding: 12px 24px;
+            z-index: 1000;
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom-right-radius: 8px;
+            transition: top 0.2s ease;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        .model-card:focus-within {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 56, 101, 0.12);
+            border-color: #005cb9;
+            outline: 2px solid #005cb9;
+            outline-offset: 2px;
+        }
+
         @media (max-width: 768px) {
             .card-grid {
                 grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -307,6 +333,7 @@
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <div class="page">
         <header>
             <div class="header-content">
@@ -328,7 +355,7 @@
             </div>
         </header>
 
-        <main id="gallery">
+        <main id="main-content">
             
         <section class="pipeline-section" data-pipeline="image-classification">
             <h2>Image Classification</h2>
@@ -342,7 +369,7 @@
                     <span class="pipeline-badge">Image Classification</span>
                     <p class="card-description">A YOLO11m image classification model trained to classify **broad benthic cover categories (Tier-1)** in underwater reef imagery from NOAA Pacific Islands surveys. The model achieves **71.0% top-1 accu</p>
                     <p class="card-org">Organization: NMFS-OSI</p>
-                    <a href="cards/NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t1.html" class="card-link">View Full Card →</a>
+                    <a href="cards/NMFS-OSI/yolo11m-cls-noaa-pacific-benthic-cover-t1.html" class="card-link" aria-label="View full card for Nmfs Osi/Yolo11M Cls Noaa Pacific Benthic Cover T1">View Full Card →</a>
                 </div>
             </div>
             </div>
@@ -360,7 +387,7 @@
                     <span class="pipeline-badge">Object Detection</span>
                     <p class="card-description">This model was trained to identify and locate **Isopora crateriformis (ICRA)** using the ultralytics YOLO11 architecture in various underwater conditions. - **Model Architecture**: YOLO11m - **Task**:</p>
                     <p class="card-org">Organization: NMFS-OSI</p>
-                    <a href="cards/NMFS-OSI/yolo11m-esa-coral-icra-detector.html" class="card-link">View Full Card →</a>
+                    <a href="cards/NMFS-OSI/yolo11m-esa-coral-icra-detector.html" class="card-link" aria-label="View full card for Nmfs Osi/Yolo11M Esa Coral Icra Detector">View Full Card →</a>
                 </div>
             </div>
             </div>
@@ -380,7 +407,7 @@
             const sections = document.querySelectorAll('.pipeline-section');
             const searchInput = document.getElementById('search');
             const pipelineFilter = document.getElementById('pipeline-filter');
-            const gallery = document.getElementById('gallery');
+            const gallery = document.getElementById('main-content');
 
             function filterCards() {
                 const query = searchInput.value.toLowerCase().trim();
