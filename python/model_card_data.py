@@ -107,6 +107,9 @@ PIPELINE_IMAGE_HINTS = {
 
 SUMMARY_QUALITY_METADATA_PREFIXES = ("language:", "base_model:", "tags:", "pipeline_tag:", "library_name:")
 
+# Pre-compile regex for performance in frequent normalization tasks
+RE_NON_ALPHANUM = re.compile(r"[^a-z0-9]+")
+
 
 @dataclass(frozen=True)
 class Metric:
@@ -881,7 +884,15 @@ def _parse_numeric_value(value: str) -> Optional[float]:
 
 
 def _normalize_heading(value: str) -> str:
-    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9]+", " ", value.lower())).strip()
+    """
+    Normalize a heading by converting to lowercase, replacing non-alphanumeric
+    characters with spaces, and collapsing multiple spaces into one.
+    Optimized for performance by using pre-compiled regex and split/join.
+    """
+    # Replace non-alphanumeric with space
+    val = RE_NON_ALPHANUM.sub(" ", value.lower())
+    # Collapse whitespace and strip in one go via split/join
+    return " ".join(val.split())
 
 
 def _strip_media(text: str) -> str:
